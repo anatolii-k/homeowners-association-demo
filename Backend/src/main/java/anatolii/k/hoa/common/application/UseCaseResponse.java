@@ -25,7 +25,7 @@ public record UseCaseResponse<T>( boolean ok, String errorCode, String errorDeta
         }
 
         public UseCaseResponse<T> build(){
-            return new UseCaseResponse<T>(ok, errorCode, errorDetails, data);
+            return new UseCaseResponse<>(ok, errorCode, errorDetails, data);
         }
 
         private boolean ok = true;

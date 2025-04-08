@@ -11,7 +11,7 @@ import anatolii.k.hoa.community.units.domain.UnitRepository;
 public class UnitRegistrationUseCases {
 
     public UseCaseResponse<Unit> register(String unitNumber, Integer unitSquare ) {
-        return UseCaseProcessor.<Unit>process(
+        return UseCaseProcessor.process(
                 ()-> registrationOperations.register(unitNumber, unitSquare)
         );
     }

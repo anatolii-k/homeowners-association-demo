@@ -78,7 +78,7 @@ public class UnitsEndpointTest {
                 .andExpect( status().isUnprocessableEntity())
                 .andReturn();
 
-        UseCaseResponse responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
+        var responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
 
         assertThat(responseBody.ok()).isFalse();
         assertThat(responseBody.errorCode()).isEqualTo(UnitException.ErrorCode.ALREADY_EXISTS.toString());
@@ -165,7 +165,7 @@ public class UnitsEndpointTest {
                 .andExpect( status().isUnprocessableEntity())
                 .andReturn();
 
-        UseCaseResponse responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
+        var responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
 
         assertThat(responseBody.ok()).isFalse();
         assertThat(responseBody.errorCode()).isEqualTo( UnitException.ErrorCode.NOT_EXISTS.toString() );

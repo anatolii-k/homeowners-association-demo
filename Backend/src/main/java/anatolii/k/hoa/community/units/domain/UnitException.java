@@ -2,8 +2,6 @@ package anatolii.k.hoa.community.units.domain;
 
 import anatolii.k.hoa.common.domain.CommonException;
 
-import java.util.Optional;
-
 public class UnitException extends CommonException {
 
     public enum ErrorCode{
