@@ -1,6 +1,7 @@
 package anatolii.k.hoa.community.units.application;
 
 import anatolii.k.hoa.common.annotations.UseCase;
+import anatolii.k.hoa.common.application.UseCaseProcessor;
 import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.units.domain.Unit;
 import anatolii.k.hoa.community.units.domain.UnitRegistrationOperations;
@@ -10,31 +11,15 @@ import anatolii.k.hoa.community.units.domain.UnitRepository;
 public class UnitRegistrationUseCases {
 
     public UseCaseResponse<Unit> register(String unitNumber, Integer unitSquare ) {
-
-        var responseBuilder = UseCaseResponse.<Unit>builder();
-        try{
-            Unit newUnit = registrationOperations.register(unitNumber, unitSquare);
-            responseBuilder.ok(true)
-                           .data(newUnit);
-        }
-        catch(Throwable e){
-            responseBuilder.ok(false)
-                           .error(e.getMessage());
-        }
-        return responseBuilder.build();
+        return UseCaseProcessor.<Unit>process(
+                ()-> registrationOperations.register(unitNumber, unitSquare)
+        );
     }
 
     public UseCaseResponse<Void> unregister(Long id ){
-        var responseBuilder = UseCaseResponse.<Void>builder();
-        try{
-            registrationOperations.unregister(id);
-            responseBuilder.ok(true);
-        }
-        catch (Throwable e){
-            responseBuilder.ok(false)
-                    .error(e.getMessage());
-        }
-        return responseBuilder.build();
+        return UseCaseProcessor.process(
+                ()-> registrationOperations.unregister(id)
+        );
     }
 
     public UnitRegistrationUseCases(UnitRepository unitRepository) {

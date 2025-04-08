@@ -1,6 +1,6 @@
 package anatolii.k.hoa.common.application;
 
-public record UseCaseResponse<T>( boolean ok, String error, T data) {
+public record UseCaseResponse<T>( boolean ok, String errorCode, String errorDetails, T data) {
 
     public static class Builder<T>{
 
@@ -9,8 +9,13 @@ public record UseCaseResponse<T>( boolean ok, String error, T data) {
             return this;
         }
 
-        public Builder<T> error( String error ){
-            this.error = error;
+        public Builder<T> errorCode( String errorCode ){
+            this.errorCode = errorCode;
+            return this;
+        }
+
+        public Builder<T> errorDetails( String errorDetails ){
+            this.errorDetails = errorDetails;
             return this;
         }
 
@@ -20,11 +25,12 @@ public record UseCaseResponse<T>( boolean ok, String error, T data) {
         }
 
         public UseCaseResponse<T> build(){
-            return new UseCaseResponse<T>(ok, error, data);
+            return new UseCaseResponse<T>(ok, errorCode, errorDetails, data);
         }
 
         private boolean ok = true;
-        private String error;
+        private String errorCode;
+        private String errorDetails;
         T data;
     }
 

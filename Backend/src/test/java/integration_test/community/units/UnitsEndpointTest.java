@@ -5,6 +5,7 @@ import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.units.application.GetUnitsUseCases;
 import anatolii.k.hoa.community.units.application.UnitRegistrationUseCases;
 import anatolii.k.hoa.community.units.domain.Unit;
+import anatolii.k.hoa.community.units.domain.UnitException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -80,7 +81,8 @@ public class UnitsEndpointTest {
         UseCaseResponse responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
 
         assertThat(responseBody.ok()).isFalse();
-        assertThat(responseBody.error()).isNotBlank();
+        assertThat(responseBody.errorCode()).isEqualTo(UnitException.ErrorCode.ALREADY_EXISTS.toString());
+        assertThat(responseBody.errorDetails()).isNotBlank();
     }
 
     @Test
@@ -166,14 +168,15 @@ public class UnitsEndpointTest {
         UseCaseResponse responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
 
         assertThat(responseBody.ok()).isFalse();
-        assertThat(responseBody.error()).isNotBlank();
+        assertThat(responseBody.errorCode()).isEqualTo( UnitException.ErrorCode.NOT_EXISTS.toString() );
+        assertThat(responseBody.errorDetails()).isNotBlank();
     }
 
 
     private Unit createUnit(String number, Integer square ){
         var response = unitRegistrationUseCases.register( number, square );
         if(!response.ok()){
-            throw new RuntimeException(response.error());
+            throw new RuntimeException(response.errorDetails());
         }
         return response.data();
     }

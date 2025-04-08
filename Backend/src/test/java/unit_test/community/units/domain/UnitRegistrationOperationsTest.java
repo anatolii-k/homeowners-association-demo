@@ -42,7 +42,7 @@ public class UnitRegistrationOperationsTest {
         UnitException exception = catchThrowableOfType( UnitException.class,
                 ()-> unitRegistrationOperations.register(existingUnit.number(), existingUnit.square()) );
 
-        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.ALREADY_EXISTS);
+        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.ALREADY_EXISTS.toString());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class UnitRegistrationOperationsTest {
         UnitException exception = catchThrowableOfType(UnitException.class,
                 ()-> unitRegistrationOperations.unregister(existingUnit.id()));
 
-        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.NOT_EXISTS);
+        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.NOT_EXISTS.toString());
 
         Mockito.verify(unitRepository, Mockito.times(0)).delete(existingUnit.id());
     }
@@ -78,10 +78,8 @@ public class UnitRegistrationOperationsTest {
         UnitException exception = catchThrowableOfType(UnitException.class,
                 ()-> unitRegistrationOperations.unregister(existingUnit.id()));
 
-        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.HAS_RESIDENTS);
+        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.HAS_RESIDENTS.toString());
 
         Mockito.verify(unitRepository, Mockito.times(0)).delete(existingUnit.id());
     }
-
-
 }

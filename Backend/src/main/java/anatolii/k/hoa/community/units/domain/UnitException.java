@@ -1,8 +1,10 @@
 package anatolii.k.hoa.community.units.domain;
 
+import anatolii.k.hoa.common.domain.CommonException;
+
 import java.util.Optional;
 
-public class UnitException extends RuntimeException{
+public class UnitException extends CommonException {
 
     public enum ErrorCode{
         ALREADY_EXISTS,
@@ -12,40 +14,21 @@ public class UnitException extends RuntimeException{
 
     public static UnitException alreadyExists(String unitNumber) {
         return new UnitException("Unit number=[%s] already exists".formatted(unitNumber),
-                ErrorCode.ALREADY_EXISTS, null, unitNumber);
+                ErrorCode.ALREADY_EXISTS);
     }
 
     public static UnitException notExists(Long id) {
         return new UnitException("Unit id=[%d] does not exist".formatted(id),
-                ErrorCode.NOT_EXISTS, id, null);
+                ErrorCode.NOT_EXISTS);
     }
 
     public static UnitException unitHasResidents(Long id) {
         return new UnitException("Unit id=[%d] has resident(s) assigned".formatted(id),
-                ErrorCode.HAS_RESIDENTS, id, null);
+                ErrorCode.HAS_RESIDENTS);
     }
 
 
-    public ErrorCode getErrorCode() {
-        return errorCode;
+    private UnitException(String errorDetails, ErrorCode errorCode) {
+        super(errorCode.toString(), errorDetails);
     }
-
-    public Optional<Long> getUnitId() {
-        return Optional.ofNullable(unitId);
-    }
-
-    public Optional<String> getUnitNumber() {
-        return Optional.ofNullable(unitNumber);
-    }
-
-    private UnitException(String message, ErrorCode errorCode, Long unitId, String unitNumber) {
-        super(message);
-        this.errorCode = errorCode;
-        this.unitId = unitId;
-        this.unitNumber = unitNumber;
-    }
-
-    private final ErrorCode errorCode;
-    private final Long unitId;
-    private final String unitNumber;
 }
