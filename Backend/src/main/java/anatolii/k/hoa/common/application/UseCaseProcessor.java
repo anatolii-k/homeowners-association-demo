@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 
 public class UseCaseProcessor {
 
+    private static final String GENERAL_ERROR = "GENERAL_ERROR";
+
     public static <T> UseCaseResponse<T> process(Supplier<T> useCaseFunc){
         var responseBuilder = UseCaseResponse.<T>builder();
         try{
@@ -20,6 +22,7 @@ public class UseCaseProcessor {
         }
         catch (Throwable ex){
             responseBuilder.ok(false)
+                    .errorCode(GENERAL_ERROR)
                     .errorDetails(ex.getMessage());
         }
         return responseBuilder.build();
@@ -38,6 +41,7 @@ public class UseCaseProcessor {
         }
         catch (Throwable ex){
             responseBuilder.ok(false)
+                    .errorCode(GENERAL_ERROR)
                     .errorDetails(ex.getMessage());
         }
         return responseBuilder.build();

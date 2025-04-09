@@ -11,7 +11,7 @@ public interface UnitRepositoryJPA extends CrudRepository<UnitEntity,Long> {
 
     boolean existsByNumber(String number);
     boolean existsById(Long id);
-    Optional<Unit> findByNumber(String number);
+    Optional<UnitEntity> findByNumber(String number);
 
     @Query("SELECT COUNT(1) != 0 FROM ResidentEntity r WHERE r.unitId = :unitId")
     boolean hasResidents(@Param("unitId") Long id);
