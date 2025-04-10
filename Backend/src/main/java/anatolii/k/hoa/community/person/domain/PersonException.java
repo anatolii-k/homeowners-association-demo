@@ -18,13 +18,13 @@ public class PersonException extends CommonException {
 
     public static PersonException attributeRequired(PersonAttributes attribute){
         String attributeName = attribute.toString();
-        return new PersonException( attributeName + "_" + ErrorCode.REQUIRED.toString(),
+        return new PersonException( attributeName + "_" + ErrorCode.REQUIRED,
                 attributeName + " is required");
     }
 
     public static PersonException invalidAttributeValue(PersonAttributes attribute, String value, String details){
         String attributeName = attribute.toString();
-        return new PersonException( attributeName + "_" + ErrorCode.INVALID.toString(),
+        return new PersonException( attributeName + "_" + ErrorCode.INVALID,
                 "%s has invalid value=[%s]. Details: %s".formatted(attributeName, value, details));
     }
 

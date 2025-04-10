@@ -100,7 +100,7 @@ public class RegisterNewPersonOperationTest {
         );
 
         assertThat(exception.getErrorCode()).isEqualTo(
-                PersonAttributes.SSN.toString() + "_" + PersonException.ErrorCode.REQUIRED);
+                PersonAttributes.SSN + "_" + PersonException.ErrorCode.REQUIRED);
 
         Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
     }
@@ -121,7 +121,7 @@ public class RegisterNewPersonOperationTest {
         );
 
         assertThat(exception.getErrorCode()).isEqualTo(
-                PersonAttributes.FIRST_NAME.toString() + "_" + PersonException.ErrorCode.REQUIRED);
+                PersonAttributes.FIRST_NAME + "_" + PersonException.ErrorCode.REQUIRED);
 
         Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
     }
@@ -142,7 +142,7 @@ public class RegisterNewPersonOperationTest {
         );
 
         assertThat(exception.getErrorCode()).isEqualTo(
-                PersonAttributes.LAST_NAME.toString() + "_" + PersonException.ErrorCode.REQUIRED);
+                PersonAttributes.LAST_NAME + "_" + PersonException.ErrorCode.REQUIRED);
 
         Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
     }
@@ -163,7 +163,7 @@ public class RegisterNewPersonOperationTest {
         );
 
         assertThat(exception.getErrorCode()).isEqualTo(
-                PersonAttributes.PHONE.toString() + "_" + PersonException.ErrorCode.REQUIRED);
+                PersonAttributes.PHONE + "_" + PersonException.ErrorCode.REQUIRED);
 
         Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
     }

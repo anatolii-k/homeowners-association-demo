@@ -52,7 +52,7 @@ public class RegisterResidentOperationTest {
         Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(true);
         Mockito.when(personService.doesPersonExist(personId)).thenReturn(true);
 
-        ResidentRecord registeredRecord = registerResidentOperation.register(new ResidentRecord(null, personId, unitId, null ));
+        registerResidentOperation.register(new ResidentRecord(null, personId, unitId, null ));
 
         Mockito.verify(residentRepository, Mockito.times(1)).save(Mockito.any());
     }
@@ -113,7 +113,6 @@ public class RegisterResidentOperationTest {
     @Test
     void whenPersonIdIsNull_thenException(){
         Long unitId = 1L;
-        Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
         Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(true);
@@ -128,7 +127,6 @@ public class RegisterResidentOperationTest {
 
     @Test
     void whenUnitIdIsNull_thenException(){
-        Long unitId = 1L;
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 

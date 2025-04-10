@@ -130,7 +130,6 @@ public class UnitsEndpointTest {
     @Transactional
     void whenGetExistingUnit_thenOk() throws Exception{
         Unit unit = createUnit("AOO1", 40);
-        Person person = createPerson("1234567890");
 
         MvcResult response = mockMvc.perform( get("/api/units/{id}", unit.id())
                         .accept(MediaType.APPLICATION_JSON) )
