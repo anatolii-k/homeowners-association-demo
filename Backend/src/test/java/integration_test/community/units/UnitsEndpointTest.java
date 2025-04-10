@@ -2,10 +2,14 @@ package integration_test.community.units;
 
 import anatolii.k.hoa.HoaApplication;
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.community.units.application.GetUnitsUseCases;
-import anatolii.k.hoa.community.units.application.UnitRegistrationUseCases;
-import anatolii.k.hoa.community.units.domain.Unit;
-import anatolii.k.hoa.community.units.domain.UnitException;
+import anatolii.k.hoa.community.person.application.PersonUseCases;
+import anatolii.k.hoa.community.person.domain.Person;
+import anatolii.k.hoa.community.resident.application.RegisterResidentUseCase;
+import anatolii.k.hoa.community.resident.domain.ResidentRecord;
+import anatolii.k.hoa.community.unit.application.GetUnitsUseCases;
+import anatolii.k.hoa.community.unit.application.UnitRegistrationUseCases;
+import anatolii.k.hoa.community.unit.domain.Unit;
+import anatolii.k.hoa.community.unit.domain.UnitException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -34,6 +38,10 @@ public class UnitsEndpointTest {
     private UnitRegistrationUseCases unitRegistrationUseCases;
     @Autowired
     private GetUnitsUseCases getUnitsUseCases;
+    @Autowired
+    private PersonUseCases personUseCases;
+    @Autowired
+    private RegisterResidentUseCase registerResidentUseCase;
     @Autowired
     private ObjectMapper json;
 
@@ -122,6 +130,7 @@ public class UnitsEndpointTest {
     @Transactional
     void whenGetExistingUnit_thenOk() throws Exception{
         Unit unit = createUnit("AOO1", 40);
+        Person person = createPerson("1234567890");
 
         MvcResult response = mockMvc.perform( get("/api/units/{id}", unit.id())
                         .accept(MediaType.APPLICATION_JSON) )
@@ -147,7 +156,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
-    void whenDeleteExistingUnit_thenOk() throws Exception {
+    void whenDeleteExistingUnitWithoutResidents_thenOk() throws Exception {
         Unit unit = createUnit("A001", 60);
 
         mockMvc.perform( delete("/api/units/{id}", unit.id()))
@@ -155,6 +164,24 @@ public class UnitsEndpointTest {
 
         boolean doesUnitExist = getUnitsUseCases.getUnit(unit.id()).isPresent();
         assertThat(doesUnitExist).isFalse();
+    }
+
+    @Test
+    @Transactional
+    void whenDeleteExistingUnitWithResident_thenFails() throws Exception{
+        Unit unit = createUnit("A001", 60);
+        Person person = createPerson("12334567890");
+        registerResident(person, unit);
+
+        MvcResult response = mockMvc.perform( delete("/api/units/{id}", unit.id()))
+                .andExpect( status().isUnprocessableEntity())
+                .andReturn();
+
+        var responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
+
+        assertThat(responseBody.ok()).isFalse();
+        assertThat(responseBody.errorCode()).isEqualTo( UnitException.ErrorCode.HAS_RESIDENTS.toString() );
+        assertThat(responseBody.errorDetails()).isNotBlank();
     }
 
     @Test
@@ -179,6 +206,22 @@ public class UnitsEndpointTest {
             throw new RuntimeException(response.errorDetails());
         }
         return response.data();
+    }
+
+    private Person createPerson( String ssn ){
+        var response = personUseCases.registerNewPerson( "Fname", "Lname",
+                "+380630001122", "test@gmail.com", ssn);
+        if(!response.ok()){
+            throw new RuntimeException(response.errorDetails());
+        }
+        return response.data();
+    }
+
+    private void registerResident(Person person, Unit unit){
+        var response = registerResidentUseCase.registerResident( new ResidentRecord(null, person.getId(), unit.id(), null));
+        if(!response.ok()){
+            throw new RuntimeException(response.errorDetails());
+        }
     }
 
 }
