@@ -6,10 +6,10 @@ import anatolii.k.hoa.community.person.application.PersonUseCases;
 import anatolii.k.hoa.community.person.domain.Person;
 import anatolii.k.hoa.community.resident.application.RegisterResidentUseCase;
 import anatolii.k.hoa.community.resident.domain.ResidentRecord;
-import anatolii.k.hoa.community.unit.application.GetUnitsUseCases;
 import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.domain.Unit;
 import anatolii.k.hoa.community.unit.domain.UnitException;
+import anatolii.k.hoa.community.unit.domain.UnitRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class UnitsEndpointTest {
     @Autowired
     private RegisterUnitUseCase registerUnitUseCase;
     @Autowired
-    private GetUnitsUseCases getUnitsUseCases;
+    private UnitRepository unitRepository;
     @Autowired
     private PersonUseCases personUseCases;
     @Autowired
@@ -161,7 +161,7 @@ public class UnitsEndpointTest {
         mockMvc.perform( delete("/api/units/{id}", unit.id()))
                 .andExpect( status().isNoContent());
 
-        boolean doesUnitExist = getUnitsUseCases.getUnit(unit.id()).isPresent();
+        boolean doesUnitExist = unitRepository.doesUnitExist(unit.id());
         assertThat(doesUnitExist).isFalse();
     }
 

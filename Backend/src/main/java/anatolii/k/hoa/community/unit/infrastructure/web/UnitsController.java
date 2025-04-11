@@ -2,7 +2,6 @@ package anatolii.k.hoa.community.unit.infrastructure.web;
 
 import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.unit.application.DeregisterUnitUseCase;
-import anatolii.k.hoa.community.unit.application.GetUnitsUseCases;
 import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.domain.Unit;
 import anatolii.k.hoa.community.unit.domain.UnitRepository;
