@@ -1,15 +1,14 @@
-package anatolii.k.hoa.community.person.application;
+package anatolii.k.hoa.community.person.api;
 
-import anatolii.k.hoa.common.annotations.UseCase;
 import anatolii.k.hoa.community.person.domain.PersonRepository;
 
-@UseCase
-public class PersonExistsUseCase {
+public class PersonService {
+
     public boolean doesPersonExist(Long id){
         return personRepository.existsPersonWithId(id);
     }
 
-    public PersonExistsUseCase(PersonRepository personRepository) {
+    public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 

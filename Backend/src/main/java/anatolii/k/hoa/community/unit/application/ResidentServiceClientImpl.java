@@ -2,9 +2,9 @@ package anatolii.k.hoa.community.unit.application;
 
 import anatolii.k.hoa.community.resident.application.ResidentExistsUseCase;
 import anatolii.k.hoa.community.unit.domain.ResidentServiceClient;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class ResidentServiceClientImpl implements ResidentServiceClient {
 
     @Override
