@@ -1,8 +1,10 @@
 package anatolii.k.hoa.community.person.infrastructure.web;
 
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.community.person.application.PersonUseCases;
+import anatolii.k.hoa.community.person.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.domain.Person;
+import anatolii.k.hoa.community.person.domain.PersonRepository;
+import anatolii.k.hoa.community.person.domain.RegisterPersonRequest;
 import anatolii.k.hoa.community.person.infrastructure.dto.PersonDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ public class PersonController {
 
     @GetMapping
     List<PersonDTO> getAllPersons(){
-        return personUseCases.getAllPersons()
+        return personRepository.getAllPersons()
                 .stream()
                 .map(PersonDTO::fromDomain)
                 .toList();
@@ -26,7 +28,7 @@ public class PersonController {
 
     @GetMapping("{id}")
     ResponseEntity<PersonDTO> getPerson( @PathVariable Long id ){
-        Optional<Person> person = personUseCases.getPerson(id);
+        Optional<Person> person = personRepository.getPerson(id);
         if(person.isEmpty()){
             return ResponseEntity.notFound().build();
         }
@@ -34,11 +36,9 @@ public class PersonController {
     }
 
     @PostMapping
-    ResponseEntity<UseCaseResponse<Person>> registerNewPerson(@RequestBody PersonDTO person,
-                                                              UriComponentsBuilder uriBuilder){
-        UseCaseResponse<Person> useCaseResponse = personUseCases.registerNewPerson(
-                person.getFirstName(), person.getLastName(), person.getPhoneNumber(),
-                person.getEmail(), person.getSsn());
+    ResponseEntity<UseCaseResponse<Person>> registerPerson(@RequestBody RegisterPersonRequest registerPersonRequest,
+                                                           UriComponentsBuilder uriBuilder){
+        UseCaseResponse<Person> useCaseResponse = registerPersonUseCase.register(registerPersonRequest);
         if(useCaseResponse.ok()){
             URI personUri = uriBuilder.path("api/person/{id}")
                     .buildAndExpand(useCaseResponse.data().getId())
@@ -48,9 +48,11 @@ public class PersonController {
         return ResponseEntity.unprocessableEntity().body(useCaseResponse);
     }
 
-    public PersonController(PersonUseCases personUseCases) {
-        this.personUseCases = personUseCases;
+    public PersonController(RegisterPersonUseCase registerPersonUseCase, PersonRepository personRepository) {
+        this.registerPersonUseCase = registerPersonUseCase;
+        this.personRepository = personRepository;
     }
 
-    private final PersonUseCases personUseCases;
+    private final RegisterPersonUseCase registerPersonUseCase;
+    private final PersonRepository personRepository;
 }

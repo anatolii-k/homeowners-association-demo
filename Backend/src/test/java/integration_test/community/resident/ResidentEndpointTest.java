@@ -2,9 +2,10 @@ package integration_test.community.resident;
 
 import anatolii.k.hoa.HoaApplication;
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.community.person.application.PersonUseCases;
+import anatolii.k.hoa.community.person.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.domain.Person;
 import anatolii.k.hoa.community.person.domain.PersonException;
+import anatolii.k.hoa.community.person.domain.RegisterPersonRequest;
 import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.domain.Unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +31,7 @@ public class ResidentEndpointTest {
     ObjectMapper json;
 
     @Autowired
-    PersonUseCases personUseCases;
+    RegisterPersonUseCase registerPersonUseCase;
     @Autowired
     RegisterUnitUseCase registerUnitUseCase;
 
@@ -90,8 +91,9 @@ public class ResidentEndpointTest {
     }
 
     private Person createPerson(String ssn ){
-        var response = personUseCases.registerNewPerson( "Fname", "Lname",
-                "+380630001122", "test@gmail.com", ssn);
+        var response = registerPersonUseCase.register(
+                new RegisterPersonRequest("Fname", "Lname",
+                "+380630001122", "test@gmail.com", ssn));
         if(!response.ok()){
             throw new RuntimeException(response.errorDetails());
         }

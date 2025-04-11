@@ -1,4 +1,4 @@
-package anatolii.k.hoa.community.person.infrastructure.db.internal;
+package anatolii.k.hoa.community.person.infrastructure.db;
 
 import anatolii.k.hoa.community.person.infrastructure.dto.PersonDTO;
 import org.springframework.data.repository.CrudRepository;

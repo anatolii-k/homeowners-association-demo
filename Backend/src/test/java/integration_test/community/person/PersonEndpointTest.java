@@ -2,8 +2,9 @@ package integration_test.community.person;
 
 import anatolii.k.hoa.HoaApplication;
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.community.person.application.PersonUseCases;
+import anatolii.k.hoa.community.person.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.domain.PersonException;
+import anatolii.k.hoa.community.person.domain.RegisterPersonRequest;
 import anatolii.k.hoa.community.person.infrastructure.dto.PersonDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +32,7 @@ public class PersonEndpointTest {
     @Autowired
     ObjectMapper json;
     @Autowired
-    PersonUseCases personUseCases;
+    RegisterPersonUseCase registerPersonUseCase;
 
     @Test
     @Transactional
@@ -71,8 +72,8 @@ public class PersonEndpointTest {
     @Transactional
     void whenRegisterNewPersonWithExistingSSN_thenFails() throws Exception {
 
-        personUseCases.registerNewPerson("Fname2", "Lname2",
-                "+380933003011", "person2@gmail.com", "1234567890");
+        registerPersonUseCase.register( new RegisterPersonRequest("Fname2", "Lname2",
+                "+380933003011", "person2@gmail.com", "1234567890"));
 
         var response = mockMvc.perform( post("/api/person")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -124,8 +125,8 @@ public class PersonEndpointTest {
     }
 
     private void registerPerson( PersonDTO person ){
-        personUseCases.registerNewPerson( person.getFirstName(), person.getLastName(),
-                person.getPhoneNumber(), person.getEmail(), person.getSsn());
+        registerPersonUseCase.register( new RegisterPersonRequest(person.getFirstName(), person.getLastName(),
+                person.getPhoneNumber(), person.getEmail(), person.getSsn()));
     }
 
     private Condition<PersonDTO> getEqualsCondition( PersonDTO arg ){

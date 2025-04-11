@@ -4,32 +4,24 @@ import anatolii.k.hoa.common.domain.Email;
 import anatolii.k.hoa.common.domain.PhoneNumber;
 import anatolii.k.hoa.common.domain.SSN;
 
-public class RegisterNewPersonOperation {
+public class RegisterPersonOperation {
 
-    public RegisterNewPersonOperation(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
+    public Person register(RegisterPersonRequest registerPersonRequest ){
 
-    public Person register(String firstName,
-                    String lastName,
-                    String phoneNumberString,
-                    String emailString,
-                    String ssnString ){
+        checkRequiredAttributes(registerPersonRequest);
 
-        checkRequiredAttribute(ssnString, PersonAttributes.SSN);
-        SSN ssn = getSSN(ssnString);
+        SSN ssn = getSSN(registerPersonRequest.getSsn());
         if(personRepository.existsPersonWithSSN(ssn.toString()) ){
             throw PersonException.ssnAlreadyExists(ssn.toString());
         }
 
-        checkRequiredAttribute(firstName, PersonAttributes.FIRST_NAME);
-        checkRequiredAttribute(lastName, PersonAttributes.LAST_NAME);
-        checkRequiredAttribute(phoneNumberString, PersonAttributes.PHONE);
+        PhoneNumber phoneNumber = getPhoneNumber(registerPersonRequest.getPhoneNumber());
+        Email email = getEmail( registerPersonRequest.getEmail() );
 
-        PhoneNumber phoneNumber = getPhoneNumber(phoneNumberString);
-        Email email = getEmail(emailString);
-
-        Person newPerson = new Person(null, firstName, lastName, phoneNumber, email, ssn);
+        Person newPerson = new Person(null,
+                registerPersonRequest.getFirstName(),
+                registerPersonRequest.getLastName(),
+                phoneNumber, email, ssn);
 
         return personRepository.save(newPerson);
     }
@@ -64,10 +56,21 @@ public class RegisterNewPersonOperation {
         }
     }
 
+    private void checkRequiredAttributes(RegisterPersonRequest registerPersonRequest){
+        checkRequiredAttribute(registerPersonRequest.getSsn(), PersonAttributes.SSN);
+        checkRequiredAttribute(registerPersonRequest.getFirstName(), PersonAttributes.FIRST_NAME);
+        checkRequiredAttribute(registerPersonRequest.getLastName(), PersonAttributes.LAST_NAME);
+        checkRequiredAttribute(registerPersonRequest.getPhoneNumber(), PersonAttributes.PHONE);
+    }
+
     private void checkRequiredAttribute(String value, PersonAttributes attribute) {
         if( value == null || value.isBlank() ){
             throw PersonException.attributeRequired(attribute);
         }
+    }
+
+    public RegisterPersonOperation(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
     private final PersonRepository personRepository;

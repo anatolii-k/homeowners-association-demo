@@ -5,12 +5,10 @@ import java.util.Optional;
 
 public interface PersonRepository {
     List<Person> getAllPersons();
-
-    boolean existsPersonWithSSN(String ssn);
-
-    Person save(Person newPerson);
-
     Optional<Person> getPerson(Long id);
 
+    boolean existsPersonWithSSN(String ssn);
     boolean existsPersonWithId(Long id);
+
+    Person save(Person newPerson);
 }

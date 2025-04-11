@@ -2,8 +2,9 @@ package integration_test.community.units;
 
 import anatolii.k.hoa.HoaApplication;
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.community.person.application.PersonUseCases;
+import anatolii.k.hoa.community.person.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.domain.Person;
+import anatolii.k.hoa.community.person.domain.RegisterPersonRequest;
 import anatolii.k.hoa.community.resident.application.RegisterResidentUseCase;
 import anatolii.k.hoa.community.resident.domain.ResidentRecord;
 import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
@@ -39,7 +40,7 @@ public class UnitsEndpointTest {
     @Autowired
     private UnitRepository unitRepository;
     @Autowired
-    private PersonUseCases personUseCases;
+    private RegisterPersonUseCase registerPersonUseCase;
     @Autowired
     private RegisterResidentUseCase registerResidentUseCase;
     @Autowired
@@ -208,8 +209,8 @@ public class UnitsEndpointTest {
     }
 
     private Person createPerson( String ssn ){
-        var response = personUseCases.registerNewPerson( "Fname", "Lname",
-                "+380630001122", "test@gmail.com", ssn);
+        var response = registerPersonUseCase.register( new RegisterPersonRequest("Fname", "Lname",
+                "+380630001122", "test@gmail.com", ssn));
         if(!response.ok()){
             throw new RuntimeException(response.errorDetails());
         }
