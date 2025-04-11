@@ -1,7 +1,7 @@
 package anatolii.k.hoa.community.unit.config;
 
 import anatolii.k.hoa.community.unit.domain.DeregisterUnitOperation;
-import anatolii.k.hoa.community.unit.domain.ResidentService;
+import anatolii.k.hoa.community.unit.domain.ResidentServiceClient;
 import anatolii.k.hoa.community.unit.domain.RegisterUnitOperation;
 import anatolii.k.hoa.community.unit.domain.UnitRepository;
 import org.springframework.context.annotation.Bean;
@@ -16,8 +16,8 @@ public class DomainOperationConfig {
 
     @Bean
     DeregisterUnitOperation deregisterUnitOperation(UnitRepository unitRepository,
-                                                    ResidentService residentService){
-        return new DeregisterUnitOperation( unitRepository, residentService );
+                                                    ResidentServiceClient residentServiceClient){
+        return new DeregisterUnitOperation( unitRepository, residentServiceClient);
     }
 
 }

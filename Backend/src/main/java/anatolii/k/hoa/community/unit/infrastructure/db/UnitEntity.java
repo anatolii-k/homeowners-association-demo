@@ -12,20 +12,20 @@ public class UnitEntity {
     Long id;
 
     String number;
-    Integer square;
+    Integer area;
 
     public static UnitEntity fromDomain(Unit domainUnit){
         return new UnitEntity(domainUnit.id(), domainUnit.number(), domainUnit.area());
     }
 
     public Unit toDomain(){
-        return new Unit(id, number, square);
+        return new Unit(id, number, area);
     }
 
-    public UnitEntity(Long id, String number, Integer square) {
+    public UnitEntity(Long id, String number, Integer area) {
         this.id = id;
         this.number = number;
-        this.square = square;
+        this.area = area;
     }
 
     public UnitEntity() {

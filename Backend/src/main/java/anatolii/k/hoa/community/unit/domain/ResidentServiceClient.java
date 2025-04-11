@@ -1,5 +1,5 @@
 package anatolii.k.hoa.community.unit.domain;
 
-public interface ResidentService {
+public interface ResidentServiceClient {
     boolean hasResidentsInUnit(Long unitId);
 }
