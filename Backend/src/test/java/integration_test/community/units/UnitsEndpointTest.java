@@ -7,7 +7,7 @@ import anatolii.k.hoa.community.person.domain.Person;
 import anatolii.k.hoa.community.resident.application.RegisterResidentUseCase;
 import anatolii.k.hoa.community.resident.domain.ResidentRecord;
 import anatolii.k.hoa.community.unit.application.GetUnitsUseCases;
-import anatolii.k.hoa.community.unit.application.UnitRegistrationUseCases;
+import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.domain.Unit;
 import anatolii.k.hoa.community.unit.domain.UnitException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -35,7 +35,7 @@ public class UnitsEndpointTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private UnitRegistrationUseCases unitRegistrationUseCases;
+    private RegisterUnitUseCase registerUnitUseCase;
     @Autowired
     private GetUnitsUseCases getUnitsUseCases;
     @Autowired
@@ -51,7 +51,7 @@ public class UnitsEndpointTest {
 
         MvcResult response = mockMvc.perform( post("/api/units")
                         .content("""
-                                { "number": "A001", "square": 40 }
+                                { "number": "A001", "area": 40 }
                                 """)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -81,7 +81,7 @@ public class UnitsEndpointTest {
         MvcResult response = mockMvc.perform( post("/api/units")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                         { "number": "A001", "square": 40 }
+                         { "number": "A001", "area": 40 }
                          """))
                 .andExpect( status().isUnprocessableEntity())
                 .andReturn();
@@ -200,7 +200,7 @@ public class UnitsEndpointTest {
 
 
     private Unit createUnit(String number, Integer square ){
-        var response = unitRegistrationUseCases.register( number, square );
+        var response = registerUnitUseCase.register( number, square );
         if(!response.ok()){
             throw new RuntimeException(response.errorDetails());
         }

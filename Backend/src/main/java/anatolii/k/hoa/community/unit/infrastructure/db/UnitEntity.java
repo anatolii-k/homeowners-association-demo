@@ -1,4 +1,4 @@
-package anatolii.k.hoa.community.unit.infrastructure.db.internal;
+package anatolii.k.hoa.community.unit.infrastructure.db;
 
 import anatolii.k.hoa.community.unit.domain.Unit;
 import jakarta.persistence.*;

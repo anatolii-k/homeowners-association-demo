@@ -2,8 +2,6 @@ package anatolii.k.hoa.community.unit.infrastructure.db;
 
 import anatolii.k.hoa.community.unit.domain.Unit;
 import anatolii.k.hoa.community.unit.domain.UnitRepository;
-import anatolii.k.hoa.community.unit.infrastructure.db.internal.UnitEntity;
-import anatolii.k.hoa.community.unit.infrastructure.db.internal.UnitRepositoryJPA;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -1,15 +1,8 @@
 package anatolii.k.hoa.community.unit.domain;
 
-public class UnitRegistrationOperations {
+public class DeregisterUnitOperation {
 
-    public Unit register(String unitNumber, Integer unitSquare ) {
-        if(unitRepository.doesUnitExist(unitNumber)){
-            throw UnitException.alreadyExists(unitNumber);
-        }
-        return unitRepository.save( new Unit(null, unitNumber, unitSquare) );
-    }
-
-    public void unregister(Long id ){
+    public void deregister(Long id ){
         if(!unitRepository.doesUnitExist(id)){
             throw UnitException.notExists(id);
         }
@@ -19,7 +12,7 @@ public class UnitRegistrationOperations {
         unitRepository.delete( id );
     }
 
-    public UnitRegistrationOperations(UnitRepository unitRepository, ResidentService residentService) {
+    public DeregisterUnitOperation(UnitRepository unitRepository, ResidentService residentService) {
         this.unitRepository = unitRepository;
         this.residentService = residentService;
     }

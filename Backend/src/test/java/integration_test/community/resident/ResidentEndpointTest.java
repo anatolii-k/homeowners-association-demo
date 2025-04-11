@@ -5,7 +5,7 @@ import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.person.application.PersonUseCases;
 import anatolii.k.hoa.community.person.domain.Person;
 import anatolii.k.hoa.community.person.domain.PersonException;
-import anatolii.k.hoa.community.unit.application.UnitRegistrationUseCases;
+import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.domain.Unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class ResidentEndpointTest {
     @Autowired
     PersonUseCases personUseCases;
     @Autowired
-    UnitRegistrationUseCases unitRegistrationUseCases;
+    RegisterUnitUseCase registerUnitUseCase;
 
     @Test
     @Transactional
@@ -82,7 +82,7 @@ public class ResidentEndpointTest {
 
 
     private Unit createUnit(String number, Integer square ){
-        var response = unitRegistrationUseCases.register( number, square );
+        var response = registerUnitUseCase.register( number, square );
         if(!response.ok()){
             throw new RuntimeException(response.errorDetails());
         }

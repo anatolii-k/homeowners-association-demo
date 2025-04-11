@@ -1,9 +1,11 @@
 package anatolii.k.hoa.community.unit.infrastructure.web;
 
 import anatolii.k.hoa.common.application.UseCaseResponse;
+import anatolii.k.hoa.community.unit.application.DeregisterUnitUseCase;
 import anatolii.k.hoa.community.unit.application.GetUnitsUseCases;
-import anatolii.k.hoa.community.unit.application.UnitRegistrationUseCases;
+import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.domain.Unit;
+import anatolii.k.hoa.community.unit.domain.UnitRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,12 +20,12 @@ public class UnitsController {
 
     @GetMapping
     ResponseEntity<List<Unit>> getAllUnits(){
-        return ResponseEntity.ok( getUnitsUseCases.getAllUnits() );
+        return ResponseEntity.ok( unitRepository.getAllUnits() );
     }
 
     @GetMapping("{id}")
     ResponseEntity<Unit> getUnit( @PathVariable("id") Long unitId ){
-        Optional<Unit> unit = getUnitsUseCases.getUnit(unitId);
+        Optional<Unit> unit = unitRepository.getUnitById(unitId);
         if( unit.isEmpty() ){
             return ResponseEntity.notFound().build();
         }
@@ -33,7 +35,7 @@ public class UnitsController {
     @PostMapping
     ResponseEntity<UseCaseResponse<Unit>> registerNewUnit(@RequestBody Unit unit, UriComponentsBuilder uriBuilder){
 
-        UseCaseResponse<Unit> useCaseResponse = unitRegistrationUseCases.register(unit.number(), unit.area());
+        UseCaseResponse<Unit> useCaseResponse = registerUnitUseCase.register(unit.number(), unit.area());
         if(useCaseResponse.ok()){
             URI uri = uriBuilder.path("api/units/{id}")
                     .buildAndExpand(useCaseResponse.data().id())
@@ -45,20 +47,22 @@ public class UnitsController {
 
 
     @DeleteMapping("{id}")
-    ResponseEntity<UseCaseResponse<Void>> unregisterUnit( @PathVariable("id") Long unitId ){
+    ResponseEntity<UseCaseResponse<Void>> deregisterUnit(@PathVariable("id") Long unitId ){
 
-        UseCaseResponse<Void> useCaseResponse = unitRegistrationUseCases.unregister(unitId);
+        UseCaseResponse<Void> useCaseResponse = deregisterUnitUseCase.deregister(unitId);
         if(useCaseResponse.ok()){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.unprocessableEntity().body(useCaseResponse);
     }
 
-    public UnitsController(GetUnitsUseCases getUnitsUseCases, UnitRegistrationUseCases unitRegistrationUseCases) {
-        this.getUnitsUseCases = getUnitsUseCases;
-        this.unitRegistrationUseCases = unitRegistrationUseCases;
+    public UnitsController(UnitRepository unitRepository, RegisterUnitUseCase registerUnitUseCase, DeregisterUnitUseCase deregisterUnitUseCase) {
+        this.unitRepository = unitRepository;
+        this.registerUnitUseCase = registerUnitUseCase;
+        this.deregisterUnitUseCase = deregisterUnitUseCase;
     }
 
-    private final GetUnitsUseCases getUnitsUseCases;
-    private final UnitRegistrationUseCases unitRegistrationUseCases;
+    private final UnitRepository unitRepository;
+    private final RegisterUnitUseCase registerUnitUseCase;
+    private final DeregisterUnitUseCase deregisterUnitUseCase;
 }

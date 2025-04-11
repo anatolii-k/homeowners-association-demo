@@ -1,4 +1,4 @@
-package anatolii.k.hoa.community.unit.application.internal;
+package anatolii.k.hoa.community.unit.application;
 
 import anatolii.k.hoa.community.resident.application.ResidentExistsUseCase;
 import anatolii.k.hoa.community.unit.domain.ResidentService;
