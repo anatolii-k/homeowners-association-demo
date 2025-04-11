@@ -44,18 +44,18 @@ public class RegisterResidentOperation {
     }
 
     private void checkThatUnitExists(Long id){
-        if(!unitService.doesUnitExist(id)){
+        if(!unitServiceClient.doesUnitExist(id)){
             throw UnitException.notExists(id);
         }
     }
 
-    public RegisterResidentOperation(UnitService unitService, PersonService personService, ResidentRepository residentRepository) {
-        this.unitService = unitService;
+    public RegisterResidentOperation(UnitServiceClient unitServiceClient, PersonService personService, ResidentRepository residentRepository) {
+        this.unitServiceClient = unitServiceClient;
         this.personService = personService;
         this.residentRepository = residentRepository;
     }
 
-    private final UnitService unitService;
+    private final UnitServiceClient unitServiceClient;
     private final PersonService personService;
     private final ResidentRepository residentRepository;
 }

@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class RegisterResidentOperationTest {
 
     @Mock
-    private UnitService unitService;
+    private UnitServiceClient unitServiceClient;
     @Mock
     private PersonService personService;
     @Mock
@@ -35,7 +35,7 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(2);
 
-        Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(true);
+        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
         Mockito.when(personService.doesPersonExist(personId)).thenReturn(true);
 
         registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt ));
@@ -49,7 +49,7 @@ public class RegisterResidentOperationTest {
         Long unitId = 1L;
         Long personId = 2L;
 
-        Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(true);
+        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
         Mockito.when(personService.doesPersonExist(personId)).thenReturn(true);
 
         registerResidentOperation.register(new ResidentRecord(null, personId, unitId, null ));
@@ -64,7 +64,7 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().plusDays(1);
 
-        Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(true);
+        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
         Mockito.when(personService.doesPersonExist(personId)).thenReturn(true);
 
         ResidentException exception = catchThrowableOfType( ResidentException.class,
@@ -82,7 +82,7 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
-        Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(false);
+        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(false);
 
         UnitException exception = catchThrowableOfType( UnitException.class,
                 ()-> registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt )));
@@ -99,7 +99,7 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
-        Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(true);
+        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
         Mockito.when(personService.doesPersonExist(personId)).thenReturn(false);
 
         PersonException exception = catchThrowableOfType( PersonException.class,
@@ -115,7 +115,7 @@ public class RegisterResidentOperationTest {
         Long unitId = 1L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
-        Mockito.when(unitService.doesUnitExist(unitId)).thenReturn(true);
+        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
 
         PersonException exception = catchThrowableOfType( PersonException.class,
                 ()-> registerResidentOperation.register(new ResidentRecord(null, null, unitId, registeredAt )));
