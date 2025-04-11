@@ -33,7 +33,7 @@ public class UnitsController {
     @PostMapping
     ResponseEntity<UseCaseResponse<Unit>> registerNewUnit(@RequestBody Unit unit, UriComponentsBuilder uriBuilder){
 
-        UseCaseResponse<Unit> useCaseResponse = unitRegistrationUseCases.register(unit.number(), unit.square());
+        UseCaseResponse<Unit> useCaseResponse = unitRegistrationUseCases.register(unit.number(), unit.area());
         if(useCaseResponse.ok()){
             URI uri = uriBuilder.path("api/units/{id}")
                     .buildAndExpand(useCaseResponse.data().id())

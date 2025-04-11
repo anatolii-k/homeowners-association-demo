@@ -26,10 +26,10 @@ public class UnitRegistrationOperationsTest {
         final Unit expectedUnit = new Unit(1L, "AOO1", 50);
 
         Mockito.when( unitRepository.doesUnitExist(expectedUnit.number()) ).thenReturn(false);
-        Mockito.when( unitRepository.save(new Unit(null, expectedUnit.number(), expectedUnit.square())))
+        Mockito.when( unitRepository.save(new Unit(null, expectedUnit.number(), expectedUnit.area())))
                 .thenReturn( expectedUnit);
 
-        Unit retUnit = unitRegistrationOperations.register(expectedUnit.number(), expectedUnit.square());
+        Unit retUnit = unitRegistrationOperations.register(expectedUnit.number(), expectedUnit.area());
 
         assertThat(retUnit).isEqualTo(expectedUnit);
     }
@@ -40,7 +40,7 @@ public class UnitRegistrationOperationsTest {
         Mockito.when( unitRepository.doesUnitExist(existingUnit.number()) ).thenReturn(true);
 
         UnitException exception = catchThrowableOfType( UnitException.class,
-                ()-> unitRegistrationOperations.register(existingUnit.number(), existingUnit.square()) );
+                ()-> unitRegistrationOperations.register(existingUnit.number(), existingUnit.area()) );
 
         assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.ALREADY_EXISTS.toString());
     }

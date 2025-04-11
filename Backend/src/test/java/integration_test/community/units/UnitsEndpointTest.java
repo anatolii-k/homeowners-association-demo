@@ -69,7 +69,7 @@ public class UnitsEndpointTest {
         Unit newUnit = json.readValue( response.getResponse().getContentAsString(), Unit.class );
 
         assertThat(newUnit.number()).isEqualTo("A001");
-        assertThat(newUnit.square()).isEqualTo(40);
+        assertThat(newUnit.area()).isEqualTo(40);
     }
 
     @Test

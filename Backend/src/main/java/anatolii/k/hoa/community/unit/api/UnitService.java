@@ -1,6 +1,5 @@
 package anatolii.k.hoa.community.unit.api;
 
-import anatolii.k.hoa.common.annotations.UseCase;
 import anatolii.k.hoa.community.unit.domain.UnitRepository;
 import org.springframework.stereotype.Service;
 

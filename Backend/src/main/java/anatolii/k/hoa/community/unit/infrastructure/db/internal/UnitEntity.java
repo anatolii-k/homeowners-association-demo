@@ -15,7 +15,7 @@ public class UnitEntity {
     Integer square;
 
     public static UnitEntity fromDomain(Unit domainUnit){
-        return new UnitEntity(domainUnit.id(), domainUnit.number(), domainUnit.square());
+        return new UnitEntity(domainUnit.id(), domainUnit.number(), domainUnit.area());
     }
 
     public Unit toDomain(){
