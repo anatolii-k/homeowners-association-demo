@@ -1,8 +1,5 @@
 package unit_test.community.person.domain;
 
-import anatolii.k.hoa.common.domain.Email;
-import anatolii.k.hoa.common.domain.PhoneNumber;
-import anatolii.k.hoa.common.domain.SSN;
 import anatolii.k.hoa.community.person.domain.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -33,7 +30,7 @@ public class RegisterPersonOperationTest {
 
         Mockito.when(personRepository.existsPersonWithSSN(request.getSsn())).thenReturn(false);
 
-        Person registeredPerson = registerPersonOperation.register(request);
+        registerPersonOperation.register(request);
 
         Mockito.verify(personRepository, Mockito.times(1)).save(Mockito.any());
     }
@@ -50,7 +47,7 @@ public class RegisterPersonOperationTest {
 
         Mockito.when(personRepository.existsPersonWithSSN(request.getSsn())).thenReturn(false);
 
-        Person registeredPerson = registerPersonOperation.register(request);
+        registerPersonOperation.register(request);
 
         Mockito.verify(personRepository, Mockito.times(1)).save(Mockito.any());
     }

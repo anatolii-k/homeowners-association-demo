@@ -1,15 +1,16 @@
-package anatolii.k.hoa.community.resident.application;
+package anatolii.k.hoa.community.resident.api;
 
-import anatolii.k.hoa.common.annotations.UseCase;
 import anatolii.k.hoa.community.resident.domain.ResidentRepository;
+import org.springframework.stereotype.Service;
 
-@UseCase
-public class ResidentExistsUseCase {
+@Service
+public class ResidentService {
+
     public boolean hasResidentsInUnit(Long unitId) {
         return residentRepository.hasResidentsInUnit(unitId);
     }
 
-    public ResidentExistsUseCase(ResidentRepository residentRepository) {
+    public ResidentService(ResidentRepository residentRepository) {
         this.residentRepository = residentRepository;
     }
 

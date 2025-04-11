@@ -1,6 +1,6 @@
 package anatolii.k.hoa.community.unit.application;
 
-import anatolii.k.hoa.community.resident.application.ResidentExistsUseCase;
+import anatolii.k.hoa.community.resident.api.ResidentService;
 import anatolii.k.hoa.community.unit.domain.ResidentServiceClient;
 import org.springframework.stereotype.Component;
 
@@ -9,12 +9,12 @@ public class ResidentServiceClientImpl implements ResidentServiceClient {
 
     @Override
     public boolean hasResidentsInUnit(Long unitId) {
-        return residentExistsUseCase.hasResidentsInUnit(unitId);
+        return residentService.hasResidentsInUnit(unitId);
     }
 
-    public ResidentServiceClientImpl(ResidentExistsUseCase residentExistsUseCase) {
-        this.residentExistsUseCase = residentExistsUseCase;
+    public ResidentServiceClientImpl(ResidentService residentService) {
+        this.residentService = residentService;
     }
 
-    private final ResidentExistsUseCase residentExistsUseCase;
+    private final ResidentService residentService;
 }
