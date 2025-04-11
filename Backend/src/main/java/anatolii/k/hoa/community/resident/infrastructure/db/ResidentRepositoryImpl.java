@@ -2,8 +2,6 @@ package anatolii.k.hoa.community.resident.infrastructure.db;
 
 import anatolii.k.hoa.community.resident.domain.ResidentRepository;
 import anatolii.k.hoa.community.resident.domain.ResidentRecord;
-import anatolii.k.hoa.community.resident.infrastructure.db.internal.ResidentRecordEntity;
-import anatolii.k.hoa.community.resident.infrastructure.db.internal.ResidentRepositoryJPA;
 import org.springframework.stereotype.Repository;
 
 @Repository
