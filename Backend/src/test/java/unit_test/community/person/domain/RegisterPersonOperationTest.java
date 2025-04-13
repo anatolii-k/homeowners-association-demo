@@ -1,9 +1,8 @@
 package unit_test.community.person.domain;
 
-import anatolii.k.hoa.community.person.domain.*;
-
 import static org.assertj.core.api.Assertions.*;
 
+import anatolii.k.hoa.community.person.internal.domain.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

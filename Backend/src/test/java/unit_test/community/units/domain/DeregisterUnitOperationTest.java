@@ -1,8 +1,8 @@
 package unit_test.community.units.domain;
 
-import anatolii.k.hoa.community.unit.domain.*;
-
 import static org.assertj.core.api.Assertions.*;
+
+import anatolii.k.hoa.community.unit.internal.domain.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

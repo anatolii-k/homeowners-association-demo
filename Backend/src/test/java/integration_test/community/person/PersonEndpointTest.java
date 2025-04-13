@@ -2,10 +2,10 @@ package integration_test.community.person;
 
 import anatolii.k.hoa.HoaApplication;
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.community.person.application.RegisterPersonUseCase;
-import anatolii.k.hoa.community.person.domain.PersonException;
-import anatolii.k.hoa.community.person.domain.RegisterPersonRequest;
-import anatolii.k.hoa.community.person.infrastructure.dto.PersonDTO;
+import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCase;
+import anatolii.k.hoa.community.person.internal.domain.PersonException;
+import anatolii.k.hoa.community.person.internal.domain.RegisterPersonRequest;
+import anatolii.k.hoa.community.person.internal.infrastructure.dto.PersonDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Condition;

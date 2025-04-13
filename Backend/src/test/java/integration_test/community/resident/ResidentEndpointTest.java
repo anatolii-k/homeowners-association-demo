@@ -2,12 +2,12 @@ package integration_test.community.resident;
 
 import anatolii.k.hoa.HoaApplication;
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.community.person.application.RegisterPersonUseCase;
-import anatolii.k.hoa.community.person.domain.Person;
-import anatolii.k.hoa.community.person.domain.PersonException;
-import anatolii.k.hoa.community.person.domain.RegisterPersonRequest;
-import anatolii.k.hoa.community.unit.application.RegisterUnitUseCase;
-import anatolii.k.hoa.community.unit.domain.Unit;
+import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCase;
+import anatolii.k.hoa.community.person.internal.domain.Person;
+import anatolii.k.hoa.community.person.internal.domain.PersonException;
+import anatolii.k.hoa.community.person.internal.domain.RegisterPersonRequest;
+import anatolii.k.hoa.community.unit.internal.application.RegisterUnitUseCase;
+import anatolii.k.hoa.community.unit.internal.domain.Unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

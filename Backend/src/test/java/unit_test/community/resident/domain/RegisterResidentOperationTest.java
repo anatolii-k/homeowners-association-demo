@@ -1,8 +1,8 @@
 package unit_test.community.resident.domain;
 
-import anatolii.k.hoa.community.person.domain.PersonException;
-import anatolii.k.hoa.community.resident.domain.*;
-import anatolii.k.hoa.community.unit.domain.UnitException;
+import anatolii.k.hoa.community.person.internal.domain.PersonException;
+import anatolii.k.hoa.community.resident.internal.domain.*;
+import anatolii.k.hoa.community.unit.internal.domain.UnitException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
