@@ -1,8 +1,8 @@
 package unit_test.community.units;
 
 import anatolii.k.hoa.community.unit.UnitService;
-import anatolii.k.hoa.community.unit.internal.domain.UnitException;
-import anatolii.k.hoa.community.unit.internal.domain.UnitRepository;
+import anatolii.k.hoa.community.unit.internal.application.UnitException;
+import anatolii.k.hoa.community.unit.internal.application.UnitRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.*;
 

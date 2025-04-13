@@ -4,7 +4,7 @@ import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.unit.internal.application.DeregisterUnitUseCase;
 import anatolii.k.hoa.community.unit.internal.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.internal.domain.Unit;
-import anatolii.k.hoa.community.unit.internal.domain.UnitRepository;
+import anatolii.k.hoa.community.unit.internal.application.UnitRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;

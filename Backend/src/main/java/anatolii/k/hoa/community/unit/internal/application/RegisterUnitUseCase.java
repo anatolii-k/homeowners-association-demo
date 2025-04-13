@@ -4,20 +4,26 @@ import anatolii.k.hoa.common.annotations.UseCase;
 import anatolii.k.hoa.common.application.UseCaseProcessor;
 import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.unit.internal.domain.Unit;
-import anatolii.k.hoa.community.unit.internal.domain.RegisterUnitOperation;
 
 @UseCase
 public class RegisterUnitUseCase {
 
-    public UseCaseResponse<Unit> register(String unitNumber, Integer unitSquare ) {
+    public UseCaseResponse<Unit> register(String unitNumber, Integer unitArea ) {
         return UseCaseProcessor.process(
-                ()-> registerUnitOperation.register(unitNumber, unitSquare)
+                ()-> registerImpl(unitNumber, unitArea)
         );
     }
 
-    public RegisterUnitUseCase(RegisterUnitOperation registerUnitOperation) {
-        this.registerUnitOperation = registerUnitOperation;
+    private Unit registerImpl( String unitNumber, Integer unitArea ){
+        if(unitRepository.doesUnitExist(unitNumber)){
+            throw UnitException.alreadyExists(unitNumber);
+        }
+        return unitRepository.save( new Unit(null, unitNumber, unitArea) );
     }
 
-    private final RegisterUnitOperation registerUnitOperation;
+    public RegisterUnitUseCase(UnitRepository unitRepository) {
+        this.unitRepository = unitRepository;
+    }
+
+    private final UnitRepository unitRepository;
 }

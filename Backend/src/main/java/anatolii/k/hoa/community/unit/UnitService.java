@@ -1,7 +1,7 @@
 package anatolii.k.hoa.community.unit;
 
-import anatolii.k.hoa.community.unit.internal.domain.UnitException;
-import anatolii.k.hoa.community.unit.internal.domain.UnitRepository;
+import anatolii.k.hoa.community.unit.internal.application.UnitException;
+import anatolii.k.hoa.community.unit.internal.application.UnitRepository;
 import org.springframework.stereotype.Service;
 
 @Service
