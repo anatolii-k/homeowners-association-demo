@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 public class PersonServiceClientImpl implements PersonServiceClient {
 
     @Override
-    public boolean doesPersonExist(Long id) {
-        return personService.doesPersonExist(id);
+    public void checkPersonExists(Long id) {
+        personService.checkPersonExists(id);
     }
-
     public PersonServiceClientImpl(PersonService personService) {
         this.personService = personService;
     }
 
     private final PersonService personService;
+
 }

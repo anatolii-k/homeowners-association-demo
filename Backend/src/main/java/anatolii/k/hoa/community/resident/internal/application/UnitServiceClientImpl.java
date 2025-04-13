@@ -6,9 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UnitServiceClientImpl implements UnitServiceClient {
+
     @Override
-    public boolean doesUnitExist(Long id) {
-        return unitService.doesUnitExist(id);
+    public void checkUnitExists(Long id) {
+        unitService.checkUnitExists(id);
     }
 
     public UnitServiceClientImpl(UnitService unitService) {
@@ -16,4 +17,5 @@ public class UnitServiceClientImpl implements UnitServiceClient {
     }
 
     private final UnitService unitService;
+
 }

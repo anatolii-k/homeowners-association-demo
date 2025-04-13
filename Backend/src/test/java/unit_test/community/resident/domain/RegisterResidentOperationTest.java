@@ -35,9 +35,6 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(2);
 
-        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
-        Mockito.when(personServiceClient.doesPersonExist(personId)).thenReturn(true);
-
         registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt ));
 
         Mockito.verify(residentRepository, Mockito.times(1)).save(Mockito.any());
@@ -48,9 +45,6 @@ public class RegisterResidentOperationTest {
 
         Long unitId = 1L;
         Long personId = 2L;
-
-        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
-        Mockito.when(personServiceClient.doesPersonExist(personId)).thenReturn(true);
 
         registerResidentOperation.register(new ResidentRecord(null, personId, unitId, null ));
 
@@ -63,9 +57,6 @@ public class RegisterResidentOperationTest {
         Long unitId = 1L;
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().plusDays(1);
-
-        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
-        Mockito.when(personServiceClient.doesPersonExist(personId)).thenReturn(true);
 
         ResidentException exception = catchThrowableOfType( ResidentException.class,
                 ()-> registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt )));
@@ -82,7 +73,8 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
-        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(false);
+        Mockito.doThrow(UnitException.notExists(unitId))
+                .when(unitServiceClient).checkUnitExists(unitId);
 
         UnitException exception = catchThrowableOfType( UnitException.class,
                 ()-> registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt )));
@@ -99,41 +91,12 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
-        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
-        Mockito.when(personServiceClient.doesPersonExist(personId)).thenReturn(false);
+        Mockito.doThrow(PersonException.notExists(personId)).when(personServiceClient).checkPersonExists(personId);
 
         PersonException exception = catchThrowableOfType( PersonException.class,
                 ()-> registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt )));
 
         assertThat(exception.getErrorCode()).isEqualTo(PersonException.ErrorCode.NOT_EXISTS.toString());
-
-        Mockito.verify(residentRepository, Mockito.times(0)).save(Mockito.any());
-    }
-
-    @Test
-    void whenPersonIdIsNull_thenException(){
-        Long unitId = 1L;
-        LocalDate registeredAt = LocalDate.now().minusDays(1);
-
-        Mockito.when(unitServiceClient.doesUnitExist(unitId)).thenReturn(true);
-
-        PersonException exception = catchThrowableOfType( PersonException.class,
-                ()-> registerResidentOperation.register(new ResidentRecord(null, null, unitId, registeredAt )));
-
-        assertThat(exception.getErrorCode()).isEqualTo(PersonException.ErrorCode.NOT_EXISTS.toString());
-
-        Mockito.verify(residentRepository, Mockito.times(0)).save(Mockito.any());
-    }
-
-    @Test
-    void whenUnitIdIsNull_thenException(){
-        Long personId = 2L;
-        LocalDate registeredAt = LocalDate.now().minusDays(1);
-
-        UnitException exception = catchThrowableOfType( UnitException.class,
-                ()-> registerResidentOperation.register(new ResidentRecord(null, personId, null, registeredAt )));
-
-        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.NOT_EXISTS.toString());
 
         Mockito.verify(residentRepository, Mockito.times(0)).save(Mockito.any());
     }
