@@ -6,17 +6,12 @@ public class DeregisterUnitOperation {
         if(!unitRepository.doesUnitExist(id)){
             throw UnitException.notExists(id);
         }
-        if(residentServiceClient.hasResidentsInUnit(id)){
-            throw UnitException.unitHasResidents(id);
-        }
         unitRepository.delete( id );
     }
 
-    public DeregisterUnitOperation(UnitRepository unitRepository, ResidentServiceClient residentServiceClient) {
+    public DeregisterUnitOperation(UnitRepository unitRepository) {
         this.unitRepository = unitRepository;
-        this.residentServiceClient = residentServiceClient;
     }
 
     private final UnitRepository unitRepository;
-    private final ResidentServiceClient residentServiceClient;
 }

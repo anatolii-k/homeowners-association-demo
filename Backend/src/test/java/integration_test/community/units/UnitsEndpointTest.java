@@ -6,6 +6,7 @@ import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCas
 import anatolii.k.hoa.community.person.internal.domain.Person;
 import anatolii.k.hoa.community.person.internal.domain.RegisterPersonRequest;
 import anatolii.k.hoa.community.resident.internal.application.RegisterResidentUseCase;
+import anatolii.k.hoa.community.resident.internal.domain.ResidentException;
 import anatolii.k.hoa.community.resident.internal.domain.ResidentRecord;
 import anatolii.k.hoa.community.unit.internal.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.internal.domain.Unit;
@@ -180,7 +181,7 @@ public class UnitsEndpointTest {
         var responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
 
         assertThat(responseBody.ok()).isFalse();
-        assertThat(responseBody.errorCode()).isEqualTo( UnitException.ErrorCode.HAS_RESIDENTS.toString() );
+        assertThat(responseBody.errorCode()).isEqualTo(ResidentException.ErrorCode.UNIT_HAS_RESIDENTS.toString() );
         assertThat(responseBody.errorDetails()).isNotBlank();
     }
 

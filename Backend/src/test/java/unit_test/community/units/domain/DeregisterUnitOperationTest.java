@@ -3,6 +3,7 @@ package unit_test.community.units.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import anatolii.k.hoa.community.unit.internal.domain.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,8 +16,6 @@ public class DeregisterUnitOperationTest {
 
     @Mock
     UnitRepository unitRepository;
-    @Mock
-    ResidentServiceClient residentServiceClient;
 
     @InjectMocks
     DeregisterUnitOperation deregisterUnitOperation;
@@ -26,7 +25,6 @@ public class DeregisterUnitOperationTest {
     void whenDeregisterExistingUnitWithoutResidents_thenOk(){
         final Unit existingUnit = new Unit(1L, "AOO1", 50);
         Mockito.when(unitRepository.doesUnitExist(existingUnit.id())).thenReturn(true);
-        Mockito.when(residentServiceClient.hasResidentsInUnit(existingUnit.id())).thenReturn(false);
 
         deregisterUnitOperation.deregister(existingUnit.id());
 
@@ -45,19 +43,4 @@ public class DeregisterUnitOperationTest {
 
         Mockito.verify(unitRepository, Mockito.times(0)).delete(existingUnit.id());
     }
-
-    @Test
-    void whenDeregisterExistingUnitWithAssignedResident_thenException(){
-        final Unit existingUnit = new Unit(1L, "AOO1", 50);
-        Mockito.when(unitRepository.doesUnitExist(existingUnit.id())).thenReturn(true);
-        Mockito.when(residentServiceClient.hasResidentsInUnit(existingUnit.id())).thenReturn(true);
-
-        UnitException exception = catchThrowableOfType(UnitException.class,
-                ()-> deregisterUnitOperation.deregister(existingUnit.id()));
-
-        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.HAS_RESIDENTS.toString());
-
-        Mockito.verify(unitRepository, Mockito.times(0)).delete(existingUnit.id());
-    }
-
 }

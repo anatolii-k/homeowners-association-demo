@@ -6,8 +6,7 @@ public class UnitException extends CommonException {
 
     public enum ErrorCode{
         ALREADY_EXISTS,
-        NOT_EXISTS,
-        HAS_RESIDENTS
+        NOT_EXISTS
     }
 
     public static UnitException alreadyExists(String unitNumber) {
@@ -18,11 +17,6 @@ public class UnitException extends CommonException {
     public static UnitException notExists(Long id) {
         return new UnitException(ErrorCode.NOT_EXISTS,
                 "Unit id=[%d] does not exist".formatted(id));
-    }
-
-    public static UnitException unitHasResidents(Long id) {
-        return new UnitException(ErrorCode.HAS_RESIDENTS,
-                "Unit id=[%d] has resident(s)".formatted(id));
     }
 
     private UnitException(ErrorCode errorCode, String errorDetails) {
