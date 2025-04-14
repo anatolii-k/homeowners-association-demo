@@ -1,8 +1,8 @@
 package unit_test.community.person;
 
 import anatolii.k.hoa.community.person.PersonService;
-import anatolii.k.hoa.community.person.internal.domain.PersonException;
-import anatolii.k.hoa.community.person.internal.domain.PersonRepository;
+import anatolii.k.hoa.community.person.internal.application.PersonException;
+import anatolii.k.hoa.community.person.internal.application.PersonRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

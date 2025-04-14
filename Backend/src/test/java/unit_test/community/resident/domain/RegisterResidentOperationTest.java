@@ -1,6 +1,6 @@
 package unit_test.community.resident.domain;
 
-import anatolii.k.hoa.community.person.internal.domain.PersonException;
+import anatolii.k.hoa.community.person.internal.application.PersonException;
 import anatolii.k.hoa.community.resident.internal.domain.*;
 import anatolii.k.hoa.community.unit.internal.application.UnitException;
 import org.junit.jupiter.api.Test;

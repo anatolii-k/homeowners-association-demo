@@ -2,9 +2,9 @@ package integration_test.community.units;
 
 import anatolii.k.hoa.HoaApplication;
 import anatolii.k.hoa.common.application.UseCaseResponse;
+import anatolii.k.hoa.community.person.internal.application.PersonDTO;
 import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.internal.domain.Person;
-import anatolii.k.hoa.community.person.internal.domain.RegisterPersonRequest;
 import anatolii.k.hoa.community.resident.internal.application.RegisterResidentUseCase;
 import anatolii.k.hoa.community.resident.internal.domain.ResidentException;
 import anatolii.k.hoa.community.resident.internal.domain.ResidentRecord;
@@ -210,7 +210,7 @@ public class UnitsEndpointTest {
     }
 
     private Person createPerson( String ssn ){
-        var response = registerPersonUseCase.register( new RegisterPersonRequest("Fname", "Lname",
+        var response = registerPersonUseCase.register( new PersonDTO(null, "Fname", "Lname",
                 "+380630001122", "test@gmail.com", ssn));
         if(!response.ok()){
             throw new RuntimeException(response.errorDetails());

@@ -1,4 +1,4 @@
-package anatolii.k.hoa.community.person.internal.infrastructure.dto;
+package anatolii.k.hoa.community.person.internal.application;
 
 
 import anatolii.k.hoa.common.domain.Email;

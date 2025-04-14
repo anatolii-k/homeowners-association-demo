@@ -1,4 +1,4 @@
-package anatolii.k.hoa.community.person.internal.domain;
+package anatolii.k.hoa.community.person.internal.application;
 
 import anatolii.k.hoa.common.domain.CommonException;
 
@@ -22,7 +22,7 @@ public class PersonException extends CommonException {
     }
 
 
-    static PersonException ssnAlreadyExists(String ssn){
+    public static PersonException ssnAlreadyExists(String ssn){
         return new PersonException(ErrorCode.SSN_ALREADY_EXISTS.toString(),
                 "Person with SSN [%s] already exists".formatted(ssn));
     }

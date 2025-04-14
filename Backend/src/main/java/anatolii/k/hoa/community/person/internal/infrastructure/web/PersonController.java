@@ -3,9 +3,8 @@ package anatolii.k.hoa.community.person.internal.infrastructure.web;
 import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.internal.domain.Person;
-import anatolii.k.hoa.community.person.internal.domain.PersonRepository;
-import anatolii.k.hoa.community.person.internal.domain.RegisterPersonRequest;
-import anatolii.k.hoa.community.person.internal.infrastructure.dto.PersonDTO;
+import anatolii.k.hoa.community.person.internal.application.PersonRepository;
+import anatolii.k.hoa.community.person.internal.application.PersonDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,9 +35,9 @@ public class PersonController {
     }
 
     @PostMapping
-    ResponseEntity<UseCaseResponse<Person>> registerPerson(@RequestBody RegisterPersonRequest registerPersonRequest,
+    ResponseEntity<UseCaseResponse<Person>> registerPerson(@RequestBody PersonDTO personData,
                                                            UriComponentsBuilder uriBuilder){
-        UseCaseResponse<Person> useCaseResponse = registerPersonUseCase.register(registerPersonRequest);
+        UseCaseResponse<Person> useCaseResponse = registerPersonUseCase.register(personData);
         if(useCaseResponse.ok()){
             URI personUri = uriBuilder.path("api/person/{id}")
                     .buildAndExpand(useCaseResponse.data().getId())

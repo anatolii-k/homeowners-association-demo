@@ -1,8 +1,8 @@
 package anatolii.k.hoa.community.person.internal.infrastructure.db;
 
-import anatolii.k.hoa.community.person.internal.domain.PersonRepository;
+import anatolii.k.hoa.community.person.internal.application.PersonRepository;
 import anatolii.k.hoa.community.person.internal.domain.Person;
-import anatolii.k.hoa.community.person.internal.infrastructure.dto.PersonDTO;
+import anatolii.k.hoa.community.person.internal.application.PersonDTO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

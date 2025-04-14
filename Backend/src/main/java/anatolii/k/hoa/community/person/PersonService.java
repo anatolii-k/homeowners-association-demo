@@ -1,7 +1,7 @@
 package anatolii.k.hoa.community.person;
 
-import anatolii.k.hoa.community.person.internal.domain.PersonException;
-import anatolii.k.hoa.community.person.internal.domain.PersonRepository;
+import anatolii.k.hoa.community.person.internal.application.PersonException;
+import anatolii.k.hoa.community.person.internal.application.PersonRepository;
 import org.springframework.stereotype.Service;
 
 @Service

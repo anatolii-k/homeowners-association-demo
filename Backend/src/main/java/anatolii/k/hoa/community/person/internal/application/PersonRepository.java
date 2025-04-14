@@ -1,4 +1,6 @@
-package anatolii.k.hoa.community.person.internal.domain;
+package anatolii.k.hoa.community.person.internal.application;
+
+import anatolii.k.hoa.community.person.internal.domain.Person;
 
 import java.util.List;
 import java.util.Optional;
