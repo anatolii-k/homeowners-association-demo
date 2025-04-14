@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,9 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest( classes = HoaApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
+@TestPropertySource( properties = {
+        "hoa.phone-number.country-code.default=99"
+})
 public class PersonEndpointTest {
     @Autowired
     MockMvc mockMvc;
@@ -43,7 +47,7 @@ public class PersonEndpointTest {
                 .content("""
                         { "firstName" : "Fname",
                           "lastName" : "Lname",
-                          "phoneNumber" : "+380633003033",
+                          "phoneNumber" : "(063)300 30 33",
                           "email" : "person@gmail.com",
                           "ssn" : "1234567890"
                         }
@@ -63,7 +67,7 @@ public class PersonEndpointTest {
 
         assertThat(newPerson.getFirstName()).isEqualTo("Fname");
         assertThat(newPerson.getLastName()).isEqualTo("Lname");
-        assertThat(newPerson.getPhoneNumber()).isEqualTo("+380633003033");
+        assertThat(newPerson.getPhoneNumber()).isEqualTo("990633003033"); // check that default country code was applied
         assertThat(newPerson.getEmail()).isEqualTo("person@gmail.com");
         assertThat(newPerson.getSsn()).isEqualTo("1234567890");
     }
@@ -100,10 +104,10 @@ public class PersonEndpointTest {
     void whenGetAllPersons_thenReturnListWithAllPersons() throws Exception {
 
         PersonDTO person1 = new PersonDTO( null, "Fname1", "Lname1",
-                "+380933003011", "person1@gmail.com", "1234567891" );
+                "380933003011", "person1@gmail.com", "1234567891" );
 
         PersonDTO person2 = new PersonDTO( null, "Fname2", "Lname2",
-                "+380933003012", "person2@gmail.com", "1234567892" );
+                "380933003012", "person2@gmail.com", "1234567892" );
 
         registerPerson(person1);
         registerPerson(person2);

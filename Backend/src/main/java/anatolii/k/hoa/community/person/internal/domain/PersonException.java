@@ -6,7 +6,6 @@ public class PersonException extends CommonException {
 
     public enum ErrorCode{
         REQUIRED,  // error code is constructed. E.g: PersonAttribute.PHONE + '_' + 'REQUIRED'
-        INVALID,   // similar to REQUIRED
         SSN_ALREADY_EXISTS,
         NOT_EXISTS
     }
@@ -22,11 +21,6 @@ public class PersonException extends CommonException {
                 attributeName + " is required");
     }
 
-    public static PersonException invalidAttributeValue(PersonAttributes attribute, String value, String details){
-        String attributeName = attribute.toString();
-        return new PersonException( attributeName + "_" + ErrorCode.INVALID,
-                "%s has invalid value=[%s]. Details: %s".formatted(attributeName, value, details));
-    }
 
     static PersonException ssnAlreadyExists(String ssn){
         return new PersonException(ErrorCode.SSN_ALREADY_EXISTS.toString(),
