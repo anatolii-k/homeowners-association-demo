@@ -19,7 +19,7 @@ public class RegisterPersonUseCase {
 
     private Person registerImpl(PersonDTO personData ){
 
-        checkRequiredAttributes(personData);
+        attributesValidation.validate(personData);
 
         SSN ssn = SSN.fromString(personData.getSsn());
         if(personRepository.existsPersonWithSSN(ssn.toString()) ){
@@ -37,23 +37,11 @@ public class RegisterPersonUseCase {
         return personRepository.save(newPerson);
     }
 
-    private void checkRequiredAttributes(PersonDTO personData){
-        checkRequiredAttribute(personData.getSsn(), PersonAttributes.SSN);
-        checkRequiredAttribute(personData.getFirstName(), PersonAttributes.FIRST_NAME);
-        checkRequiredAttribute(personData.getLastName(), PersonAttributes.LAST_NAME);
-        checkRequiredAttribute(personData.getPhoneNumber(), PersonAttributes.PHONE);
-    }
-
-    private void checkRequiredAttribute(String value, PersonAttributes attribute) {
-        if( value == null || value.isBlank() ){
-            throw PersonException.attributeRequired(attribute);
-        }
-    }
-
-
-    public RegisterPersonUseCase(PersonRepository personRepository) {
+    public RegisterPersonUseCase(PersonAttributesValidation attributesValidation, PersonRepository personRepository) {
+        this.attributesValidation = attributesValidation;
         this.personRepository = personRepository;
     }
 
+    private final PersonAttributesValidation attributesValidation;
     private final PersonRepository personRepository;
 }

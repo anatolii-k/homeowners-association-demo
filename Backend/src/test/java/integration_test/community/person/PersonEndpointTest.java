@@ -1,6 +1,7 @@
 package integration_test.community.person;
 
 import anatolii.k.hoa.HoaApplication;
+import anatolii.k.hoa.common.application.AttributeValidators;
 import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.internal.application.PersonException;
@@ -95,6 +96,34 @@ public class PersonEndpointTest {
 
         assertThat(responseBody.ok()).isFalse();
         assertThat(responseBody.errorCode()).isEqualTo(PersonException.ErrorCode.SSN_ALREADY_EXISTS.toString());
+        assertThat(responseBody.errorDetails()).isNotBlank();
+    }
+
+
+    @Test
+    @Transactional
+    void whenRegisterNewPersonWithoutFirstName_thenFails() throws Exception {
+
+        registerPersonUseCase.register( new PersonDTO(null, "Fname2", "Lname2",
+                "+380933003011", "person2@gmail.com", "1234567890"));
+
+        var response = mockMvc.perform( post("/api/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                          "lastName" : "Lname",
+                          "phoneNumber" : "+380633003033",
+                          "email" : "person@gmail.com",
+                          "ssn" : "1234567890"
+                        }
+                        """)
+                ).andExpect( status().isUnprocessableEntity() )
+                .andReturn();
+
+        var responseBody = json.readValue( response.getResponse().getContentAsString(), UseCaseResponse.class );
+
+        assertThat(responseBody.ok()).isFalse();
+        assertThat(responseBody.errorCode()).isEqualTo(AttributeValidators.ErrorCode.EMPTY_VALUE.toString());
         assertThat(responseBody.errorDetails()).isNotBlank();
     }
 

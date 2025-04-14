@@ -1,8 +1,10 @@
 package unit_test.community.person.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 import anatolii.k.hoa.common.application.UseCaseResponse;
+import anatolii.k.hoa.common.domain.CommonException;
 import anatolii.k.hoa.common.domain.PhoneNumber;
 import anatolii.k.hoa.community.person.internal.application.*;
 import anatolii.k.hoa.community.person.internal.domain.Person;
@@ -18,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class RegisterPersonUseCaseTest {
     @Mock
     PersonRepository personRepository;
+    @Mock
+    PersonAttributesValidation attributesValidation;
     @InjectMocks
     RegisterPersonUseCase registerPersonUseCase;
 
@@ -35,11 +39,11 @@ public class RegisterPersonUseCaseTest {
         UseCaseResponse<Person> response = registerPersonUseCase.register(request);
         assertThat(response.ok()).isTrue();
 
-        Mockito.verify(personRepository, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(personRepository, Mockito.times(1)).save(any());
     }
 
     @Test
-    void whenCorrectDataAndNoEmail_thenOk(){
+    void whenOptionalAttributeIsNull_thenOk(){
         PersonDTO request = new PersonDTO( null,
                 "Fname",
                 "Lname",
@@ -53,7 +57,24 @@ public class RegisterPersonUseCaseTest {
         UseCaseResponse<Person> response = registerPersonUseCase.register(request);
         assertThat(response.ok()).isTrue();
 
-        Mockito.verify(personRepository, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(personRepository, Mockito.times(1)).save(any());
+    }
+
+    @Test
+    void whenRequiredAttributeIsNull_thenException(){
+        PersonDTO request = new PersonDTO( null,
+                "Fname",
+                "Lname",
+                "+380633003030",
+                "person@gmail.com",
+                null );
+
+        Mockito.doThrow(CommonException.class).when(attributesValidation).validate(any());
+
+        UseCaseResponse<Person> response = registerPersonUseCase.register(request);
+        assertThat(response.ok()).isFalse();
+
+        Mockito.verify(personRepository, Mockito.times(0)).save(any());
     }
 
     @Test
@@ -75,69 +96,7 @@ public class RegisterPersonUseCaseTest {
         assertThat(response.ok()).isFalse();
         assertThat(response.errorCode()).isEqualTo(PersonException.ErrorCode.SSN_ALREADY_EXISTS.toString());
 
-        Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
-    }
-
-    @Test
-    void whenNoSSN_thenException(){
-        PersonDTO request = new PersonDTO( null,
-                "Fname",
-                "Lname",
-                "+380633003030",
-                "person@gmail.com",
-                null );
-
-        UseCaseResponse<Person> response = registerPersonUseCase.register(request);
-        assertThat(response.ok()).isFalse();
-        assertThat(response.errorCode()).isEqualTo(PersonAttributes.SSN + "_" + PersonException.ErrorCode.REQUIRED);
-
-        Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
-    }
-
-    @Test
-    void whenEmptyFirstName_thenException(){
-        PersonDTO request = new PersonDTO( null,
-                "",
-                "Lname",
-                "+380633003030",
-                "person@gmail.com",
-                "1234567890");
-
-        UseCaseResponse<Person> response = registerPersonUseCase.register(request);
-        assertThat(response.ok()).isFalse();
-        assertThat(response.errorCode()).isEqualTo(PersonAttributes.FIRST_NAME + "_" + PersonException.ErrorCode.REQUIRED);
-
-        Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
-    }
-
-    @Test
-    void whenNoLastName_thenException(){
-        PersonDTO request = new PersonDTO( null,
-                "Fname",
-                "",
-                "+380633003030",
-                "person@gmail.com",
-                "1234567890");
-
-        UseCaseResponse<Person> response = registerPersonUseCase.register(request);
-        assertThat(response.ok()).isFalse();
-        assertThat(response.errorCode()).isEqualTo(PersonAttributes.LAST_NAME + "_" + PersonException.ErrorCode.REQUIRED);
-
-        Mockito.verify(personRepository, Mockito.times(0)).save(Mockito.any());
-    }
-
-    @Test
-    void whenNoPhoneNumber_thenException(){
-        PersonDTO request = new PersonDTO( null,
-                "Fname",
-                "Lname",
-                "",
-                "person@gmail.com",
-                "1234567890");
-
-        UseCaseResponse<Person> response = registerPersonUseCase.register(request);
-        assertThat(response.ok()).isFalse();
-        assertThat(response.errorCode()).isEqualTo(PersonAttributes.PHONE + "_" + PersonException.ErrorCode.REQUIRED);
+        Mockito.verify(personRepository, Mockito.times(0)).save(any());
     }
 
     @Disabled
