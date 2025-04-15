@@ -1,4 +1,4 @@
-package anatolii.k.hoa.community.resident.internal.domain;
+package anatolii.k.hoa.community.resident.internal.application;
 
 import anatolii.k.hoa.common.domain.CommonException;
 

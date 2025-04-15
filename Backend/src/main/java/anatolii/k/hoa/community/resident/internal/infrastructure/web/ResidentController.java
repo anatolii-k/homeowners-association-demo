@@ -19,7 +19,7 @@ public class ResidentController {
     @PostMapping
     ResponseEntity<UseCaseResponse<ResidentRecord>> registerResident(@RequestBody ResidentRecord residentRecord,
                                                            UriComponentsBuilder uriComponentsBuilder){
-        UseCaseResponse<ResidentRecord> useCaseResponse = registerResidentUseCase.registerResident(residentRecord);
+        UseCaseResponse<ResidentRecord> useCaseResponse = registerResidentUseCase.register(residentRecord);
         if(useCaseResponse.ok()){
             Long unitId = useCaseResponse.data().getUnitId();
             URI uri = uriComponentsBuilder.path("/api/resident/unit/{id}")

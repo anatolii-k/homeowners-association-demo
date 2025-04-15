@@ -10,12 +10,12 @@ public class BeforeDeregisterUnitHandler {
 
     @EventListener
     void onBeforeDeregisterUnit(BeforeDeregisterUnitEvent event){
-        deregisterUnitUseCase.check(event.unitId());
+        canDeregisterUnitUseCase.check(event.unitId());
     }
 
-    public BeforeDeregisterUnitHandler(CanDeregisterUnitUseCase deregisterUnitUseCase) {
-        this.deregisterUnitUseCase = deregisterUnitUseCase;
+    public BeforeDeregisterUnitHandler(CanDeregisterUnitUseCase canDeregisterUnitUseCase) {
+        this.canDeregisterUnitUseCase = canDeregisterUnitUseCase;
     }
 
-    private final CanDeregisterUnitUseCase deregisterUnitUseCase;
+    private final CanDeregisterUnitUseCase canDeregisterUnitUseCase;
 }

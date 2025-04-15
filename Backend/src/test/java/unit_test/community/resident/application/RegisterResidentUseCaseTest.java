@@ -1,7 +1,12 @@
-package unit_test.community.resident.domain;
+package unit_test.community.resident.application;
 
+import anatolii.k.hoa.community.person.PersonService;
 import anatolii.k.hoa.community.person.internal.application.PersonException;
+import anatolii.k.hoa.community.resident.internal.application.RegisterResidentUseCase;
+import anatolii.k.hoa.community.resident.internal.application.ResidentException;
+import anatolii.k.hoa.community.resident.internal.application.ResidentRepository;
 import anatolii.k.hoa.community.resident.internal.domain.*;
+import anatolii.k.hoa.community.unit.UnitService;
 import anatolii.k.hoa.community.unit.internal.application.UnitException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,22 +16,21 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import java.time.LocalDate;
 
 @ExtendWith(MockitoExtension.class)
-public class RegisterResidentOperationTest {
+public class RegisterResidentUseCaseTest {
 
     @Mock
-    private UnitServiceClient unitServiceClient;
+    private UnitService unitService;
     @Mock
-    private PersonServiceClient personServiceClient;
+    private PersonService personService;
     @Mock
     private ResidentRepository residentRepository;
 
     @InjectMocks
-    private RegisterResidentOperation registerResidentOperation;
+    private RegisterResidentUseCase registerPersonUseCase;
 
     @Test
     void whenExistingUnitAndPersonAndValidDate_thenOk(){
@@ -35,7 +39,8 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(2);
 
-        registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt ));
+        var response = registerPersonUseCase.register(new ResidentRecord(null, personId, unitId, registeredAt ));
+        assertThat(response.ok()).isTrue();
 
         Mockito.verify(residentRepository, Mockito.times(1)).save(Mockito.any());
     }
@@ -46,7 +51,8 @@ public class RegisterResidentOperationTest {
         Long unitId = 1L;
         Long personId = 2L;
 
-        registerResidentOperation.register(new ResidentRecord(null, personId, unitId, null ));
+        var response = registerPersonUseCase.register(new ResidentRecord(null, personId, unitId, null ));
+        assertThat(response.ok()).isTrue();
 
         Mockito.verify(residentRepository, Mockito.times(1)).save(Mockito.any());
     }
@@ -56,12 +62,12 @@ public class RegisterResidentOperationTest {
 
         Long unitId = 1L;
         Long personId = 2L;
-        LocalDate registeredAt = LocalDate.now().plusDays(1);
+        LocalDate registeredAt = LocalDate.now().plusDays(10);
 
-        ResidentException exception = catchThrowableOfType( ResidentException.class,
-                ()-> registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt )));
+        var response = registerPersonUseCase.register(new ResidentRecord(null, personId, unitId, registeredAt ));
 
-        assertThat(exception.getErrorCode()).isEqualTo(ResidentException.ErrorCode.REGISTERED_AT_IN_FUTURE.toString());
+        assertThat(response.ok()).isFalse();
+        assertThat(response.errorCode()).isEqualTo(ResidentException.ErrorCode.REGISTERED_AT_IN_FUTURE.toString());
 
         Mockito.verify(residentRepository, Mockito.times(0)).save(Mockito.any());
     }
@@ -74,12 +80,12 @@ public class RegisterResidentOperationTest {
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
         Mockito.doThrow(UnitException.notExists(unitId))
-                .when(unitServiceClient).checkUnitExists(unitId);
+                .when(unitService).checkUnitExists(unitId);
 
-        UnitException exception = catchThrowableOfType( UnitException.class,
-                ()-> registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt )));
+        var response = registerPersonUseCase.register(new ResidentRecord(null, personId, unitId, registeredAt ));
 
-        assertThat(exception.getErrorCode()).isEqualTo(UnitException.ErrorCode.NOT_EXISTS.toString());
+        assertThat(response.ok()).isFalse();
+        assertThat(response.errorCode()).isEqualTo(UnitException.ErrorCode.NOT_EXISTS.toString());
 
         Mockito.verify(residentRepository, Mockito.times(0)).save(Mockito.any());
     }
@@ -91,12 +97,12 @@ public class RegisterResidentOperationTest {
         Long personId = 2L;
         LocalDate registeredAt = LocalDate.now().minusDays(1);
 
-        Mockito.doThrow(PersonException.notExists(personId)).when(personServiceClient).checkPersonExists(personId);
+        Mockito.doThrow(PersonException.notExists(personId)).when(personService).checkPersonExists(personId);
 
-        PersonException exception = catchThrowableOfType( PersonException.class,
-                ()-> registerResidentOperation.register(new ResidentRecord(null, personId, unitId, registeredAt )));
+        var response = registerPersonUseCase.register(new ResidentRecord(null, personId, unitId, registeredAt ));
 
-        assertThat(exception.getErrorCode()).isEqualTo(PersonException.ErrorCode.NOT_EXISTS.toString());
+        assertThat(response.ok()).isFalse();
+        assertThat(response.errorCode()).isEqualTo(UnitException.ErrorCode.NOT_EXISTS.toString());
 
         Mockito.verify(residentRepository, Mockito.times(0)).save(Mockito.any());
     }

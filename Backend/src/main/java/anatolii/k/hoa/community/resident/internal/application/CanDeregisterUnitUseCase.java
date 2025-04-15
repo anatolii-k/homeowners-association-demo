@@ -1,8 +1,6 @@
 package anatolii.k.hoa.community.resident.internal.application;
 
 import anatolii.k.hoa.common.annotations.UseCase;
-import anatolii.k.hoa.community.resident.internal.domain.ResidentException;
-import anatolii.k.hoa.community.resident.internal.domain.ResidentRepository;
 
 @UseCase
 public class CanDeregisterUnitUseCase {

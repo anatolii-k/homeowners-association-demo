@@ -1,8 +1,8 @@
 package unit_test.community.resident.application;
 
 import anatolii.k.hoa.community.resident.internal.application.CanDeregisterUnitUseCase;
-import anatolii.k.hoa.community.resident.internal.domain.ResidentException;
-import anatolii.k.hoa.community.resident.internal.domain.ResidentRepository;
+import anatolii.k.hoa.community.resident.internal.application.ResidentException;
+import anatolii.k.hoa.community.resident.internal.application.ResidentRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

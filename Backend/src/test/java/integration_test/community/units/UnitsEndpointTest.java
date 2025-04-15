@@ -6,7 +6,7 @@ import anatolii.k.hoa.community.person.internal.application.PersonDTO;
 import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.internal.domain.Person;
 import anatolii.k.hoa.community.resident.internal.application.RegisterResidentUseCase;
-import anatolii.k.hoa.community.resident.internal.domain.ResidentException;
+import anatolii.k.hoa.community.resident.internal.application.ResidentException;
 import anatolii.k.hoa.community.resident.internal.domain.ResidentRecord;
 import anatolii.k.hoa.community.unit.internal.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.internal.domain.Unit;
@@ -219,7 +219,7 @@ public class UnitsEndpointTest {
     }
 
     private void registerResident(Person person, Unit unit){
-        var response = registerResidentUseCase.registerResident( new ResidentRecord(null, person.getId(), unit.id(), null));
+        var response = registerResidentUseCase.register( new ResidentRecord(null, person.getId(), unit.id(), null));
         if(!response.ok()){
             throw new RuntimeException(response.errorDetails());
         }

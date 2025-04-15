@@ -7,6 +7,8 @@ import anatolii.k.hoa.common.domain.SSN;
 import anatolii.k.hoa.community.person.internal.domain.Person;
 import jakarta.persistence.*;
 
+import java.util.Optional;
+
 @Entity
 @Table(name="person")
 public class PersonDTO {
@@ -42,9 +44,12 @@ public class PersonDTO {
         return new PersonDTO(domainObj.getId(),
                 domainObj.getFirstName(),
                 domainObj.getLastName(),
-                domainObj.getPhoneNumber().toString(),
-                domainObj.getEmail().toString(),
-                domainObj.getSsn().toString());
+                Optional.ofNullable(domainObj.getPhoneNumber())
+                        .map(PhoneNumber::toString).orElse(""),
+                Optional.ofNullable(domainObj.getEmail())
+                        .map(Email::toString).orElse(""),
+                Optional.ofNullable(domainObj.getSsn())
+                        .map(SSN::toString).orElse(""));
     }
 
     public Person toDomain(){

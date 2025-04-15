@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "resident_record")
-class ResidentRecordEntity {
+class ResidentRecordDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,18 +21,18 @@ class ResidentRecordEntity {
     @Column(name="registered_at")
     private LocalDate registeredAt;
 
-    static public ResidentRecordEntity fromDomain(ResidentRecord domain){
-        return new ResidentRecordEntity(domain.getId(), domain.getPersonId(), domain.getUnitId(), domain.getRegisteredAt());
+    static public ResidentRecordDTO fromDomain(ResidentRecord domain){
+        return new ResidentRecordDTO(domain.getId(), domain.getPersonId(), domain.getUnitId(), domain.getRegisteredAt());
     }
 
     public ResidentRecord toDomain(){
         return new ResidentRecord(id, personId, unitId, registeredAt);
     }
 
-    public ResidentRecordEntity() {
+    public ResidentRecordDTO() {
     }
 
-    public ResidentRecordEntity(Long id, Long personId, Long unitId, LocalDate registeredAt) {
+    public ResidentRecordDTO(Long id, Long personId, Long unitId, LocalDate registeredAt) {
         this.id = id;
         this.personId = personId;
         this.unitId = unitId;
