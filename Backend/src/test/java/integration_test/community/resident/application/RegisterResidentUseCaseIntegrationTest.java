@@ -9,7 +9,6 @@ import anatolii.k.hoa.community.resident.internal.domain.ResidentRecord;
 import anatolii.k.hoa.community.unit.internal.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.internal.domain.Unit;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.mockStatic;
 
 @SpringBootTest( classes = HoaApplication.class)
 @TestPropertySource(
