@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "budget_plan")
@@ -37,7 +39,7 @@ public class BudgetPlanDTO {
         List<BudgetCategoryDTO> categories = budgetPlan.getCategories()
                 .stream()
                 .map(BudgetCategoryDTO::fromDomain)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
         var budgetDTO = new BudgetPlanDTO(budgetPlan.getYear().getValue(),
                 categories, budgetPlan.getStatus().toString());
         budgetDTO.setTotal( budgetPlan.getTotal().getAmount() );
@@ -47,7 +49,7 @@ public class BudgetPlanDTO {
     public BudgetPlan toDomain(){
         List<BudgetCategory> domainCategories = categories.stream()
                 .map(BudgetCategoryDTO::toDomain)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
 
         return BudgetPlan.create(Year.of(year), domainCategories, BudgetPlan.Status.valueOf(status));
     }

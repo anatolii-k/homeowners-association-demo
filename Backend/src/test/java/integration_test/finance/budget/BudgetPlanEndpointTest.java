@@ -6,6 +6,7 @@ import anatolii.k.hoa.finance.budget.internal.application.*;
 import anatolii.k.hoa.finance.budget.internal.domain.BudgetCategory;
 import anatolii.k.hoa.finance.budget.internal.domain.BudgetException;
 import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlan;
+import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlanRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,10 +41,7 @@ public class BudgetPlanEndpointTest {
     ObjectMapper json;
 
     @Autowired
-    CreateOrUpdateBudgetPlanUseCase createOrUpdateBudgetPlanUseCase;
-
-    @Autowired
-    ChangeBudgetStateUseCases changeBudgetStateUseCases;
+    CreateBudgetPlanUseCase createBudgetPlanUseCase;
 
     @Autowired
     BudgetPlanRepository budgetPlanRepository;
@@ -59,7 +59,7 @@ public class BudgetPlanEndpointTest {
                 BudgetPlan.Status.DRAFT.toString()
         );
 
-        MvcResult response = mockMvc.perform( put("/api/budget-plan")
+        MvcResult response = mockMvc.perform( post("/api/budget-plan")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content( json.writeValueAsString(budget) )
                 ).andExpect( status().isCreated() )
@@ -83,80 +83,6 @@ public class BudgetPlanEndpointTest {
 
     @Test
     @Transactional
-    void givenDraftBudgetPlan_whenUpdate_thenOk() throws Exception {
-        Year year = Year.now();
-        ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
-        categories.add(new BudgetCategoryDTO(year.getValue(), null, "one", "", BigDecimal.TEN, BudgetCategory.AllocationType.PER_UNIT.toString()));
-        categories.add(new BudgetCategoryDTO(year.getValue(), null, "two", "", BigDecimal.TWO, BudgetCategory.AllocationType.PER_UNIT.toString()));
-        BudgetPlanDTO budget = new BudgetPlanDTO( year.getValue(),
-                categories,
-                BudgetPlan.Status.DRAFT.toString()
-        );
-
-        var useCaseResponse = createOrUpdateBudgetPlanUseCase.createOrUpdate(budget);
-        assertThat(useCaseResponse.ok()).isTrue();
-
-        {
-            Optional<BudgetPlan> budgetPlanDB = budgetPlanRepository.getBudgetPlanForYear(year);
-            assertThat(budgetPlanDB.isPresent()).isTrue();
-            assertThat(budgetPlanDB.get().getCategories().size()).isEqualTo(2);
-        }
-
-        budget.getCategories().removeFirst();
-
-        MvcResult response = mockMvc.perform( put("/api/budget-plan")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content( json.writeValueAsString(budget) )
-                ).andExpect( status().isNoContent() )
-                .andReturn();
-        {
-            Optional<BudgetPlan> budgetPlanDB = budgetPlanRepository.getBudgetPlanForYear(year);
-            assertThat(budgetPlanDB.isPresent()).isTrue();
-            assertThat(budgetPlanDB.get().getCategories().size()).isEqualTo(1);
-        }
-    }
-
-    @Test
-    @Transactional
-    void givenFinalizedBudgetPlan_whenUpdate_thenFails() throws Exception {
-        Year year = Year.now();
-        ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
-        categories.add(new BudgetCategoryDTO(year.getValue(), null, "one", "", BigDecimal.TEN, BudgetCategory.AllocationType.PER_UNIT.toString()));
-        categories.add(new BudgetCategoryDTO(year.getValue(), null, "two", "", BigDecimal.TWO, BudgetCategory.AllocationType.PER_UNIT.toString()));
-        BudgetPlanDTO budget = new BudgetPlanDTO( year.getValue(),
-                categories,
-                BudgetPlan.Status.DRAFT.toString()
-        );
-
-        var useCaseResponse = createOrUpdateBudgetPlanUseCase.createOrUpdate(budget);
-        assertThat(useCaseResponse.ok()).isTrue();
-
-        changeBudgetStateUseCases.changeState(year.getValue(), ChangeBudgetStateUseCases.Action.submit.toString());
-
-        {
-            Optional<BudgetPlan> budgetPlanDB = budgetPlanRepository.getBudgetPlanForYear(year);
-            assertThat(budgetPlanDB.isPresent()).isTrue();
-            assertThat(budgetPlanDB.get().getCategories().size()).isEqualTo(2);
-            assertThat(budgetPlanDB.get().isFinalized()).isTrue();
-        }
-
-        budget.getCategories().removeFirst();
-
-        MvcResult ret = mockMvc.perform( put("/api/budget-plan")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content( json.writeValueAsString(budget) )
-                ).andExpect( status().isUnprocessableEntity() )
-                .andReturn();
-
-        var response = json.readValue(ret.getResponse().getContentAsString(), UseCaseResponse.class);
-
-        assertThat(response).isNotNull();
-        assertThat(response.ok()).isFalse();
-        assertThat(response.errorCode()).isEqualTo(BudgetException.ErrorCode.BUDGET_ALREADY_FINALIZED.toString());
-    }
-
-    @Test
-    @Transactional
     void givenDraftBudgetPlan_whenSubmit_thenOk() throws Exception {
         Year year = Year.now();
         ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
@@ -167,7 +93,7 @@ public class BudgetPlanEndpointTest {
                 BudgetPlan.Status.DRAFT.toString()
         );
 
-        var useCaseResponse = createOrUpdateBudgetPlanUseCase.createOrUpdate(budget);
+        var useCaseResponse = createBudgetPlanUseCase.create(budget);
         assertThat(useCaseResponse.ok()).isTrue();
 
         mockMvc.perform( post("/api/budget-plan/{year}/submit", year.getValue())
@@ -194,7 +120,7 @@ public class BudgetPlanEndpointTest {
                 BudgetPlan.Status.DRAFT.toString()
         );
 
-        var useCaseResponse = createOrUpdateBudgetPlanUseCase.createOrUpdate(budget);
+        var useCaseResponse = createBudgetPlanUseCase.create(budget);
         assertThat(useCaseResponse.ok()).isTrue();
 
         var ret = mockMvc.perform( post("/api/budget-plan/{year}/approve", year.getValue())
@@ -210,5 +136,153 @@ public class BudgetPlanEndpointTest {
         assertThat(response.errorCode()).isEqualTo(BudgetException.ErrorCode.INCORRECT_STATUS.toString());
     }
 
+    @Test
+    @Transactional
+    void givenDraftBudgetPlan_whenUpdateCategory_thenOk() throws Exception {
+        Year year = Year.now();
+        {
+            // create budget plan
+
+            ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
+            categories.add(new BudgetCategoryDTO(year.getValue(), null, "one", "", BigDecimal.TEN, BudgetCategory.AllocationType.PER_UNIT.toString()));
+            categories.add(new BudgetCategoryDTO(year.getValue(), null, "two", "", BigDecimal.TWO, BudgetCategory.AllocationType.PER_UNIT.toString()));
+            BudgetPlanDTO budget = new BudgetPlanDTO( year.getValue(),
+                    categories,
+                    BudgetPlan.Status.DRAFT.toString()
+            );
+            var useCaseResponse = createBudgetPlanUseCase.create(budget);
+            assertThat(useCaseResponse.ok()).isTrue();
+        }
+        String categoryNewName = "updated category";
+        Long categoryId;
+        {
+            // update first category
+
+            BudgetPlan budget = budgetPlanRepository.getBudgetPlanForYear(year)
+                    .orElseThrow();
+            BudgetCategory category = budget.getCategories().getFirst();
+            categoryId = category.getId();
+            category.setName(categoryNewName);
+
+
+            mockMvc.perform( put("/api/budget-plan/{year}/category", year.getValue())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content( json.writeValueAsString(BudgetCategoryDTO.fromDomain(category)) )
+                    ).andExpect( status().isNoContent() );
+        }
+        {
+            //check that category is updated in DB
+
+            BudgetPlan budgetDB = budgetPlanRepository.getBudgetPlanForYear(year)
+                    .orElseThrow();
+            BudgetCategory updatedCategory = budgetDB.getCategories()
+                    .stream()
+                    .filter(category -> category.getId().equals(categoryId))
+                    .findAny()
+                    .orElseThrow();
+
+            assertThat(updatedCategory.getName()).isEqualTo(categoryNewName);
+        }
+    }
+
+    @Test
+    @Transactional
+    void givenDraftBudgetPlan_whenAddNewCategory_thenOk() throws Exception {
+        Year year = Year.now();
+        {
+            // create budget plan
+
+            ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
+            categories.add(new BudgetCategoryDTO(year.getValue(), null, "one", "", BigDecimal.TEN, BudgetCategory.AllocationType.PER_UNIT.toString()));
+            categories.add(new BudgetCategoryDTO(year.getValue(), null, "two", "", BigDecimal.TWO, BudgetCategory.AllocationType.PER_UNIT.toString()));
+            BudgetPlanDTO budget = new BudgetPlanDTO( year.getValue(),
+                    categories,
+                    BudgetPlan.Status.DRAFT.toString()
+            );
+            var useCaseResponse = createBudgetPlanUseCase.create(budget);
+            assertThat(useCaseResponse.ok()).isTrue();
+        }
+        String newCategoryName = "new category";
+        Set<Long> existingCategoriesIds;
+        {
+            // add new category
+
+            BudgetPlan budget = budgetPlanRepository.getBudgetPlanForYear(year)
+                    .orElseThrow();
+            existingCategoriesIds = budget.getCategories()
+                            .stream()
+                            .map( BudgetCategory::getId )
+                            .collect(Collectors.toSet());
+
+            var newCategory = new BudgetCategoryDTO(year.getValue(), null, newCategoryName, "", BigDecimal.ONE, BudgetCategory.AllocationType.PER_UNIT.toString());
+
+            mockMvc.perform( put("/api/budget-plan/{year}/category", year.getValue())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content( json.writeValueAsString(newCategory) )
+            ).andExpect( status().isNoContent() );
+        }
+        {
+            //check that category is updated in DB
+
+            BudgetPlan budgetDB = budgetPlanRepository.getBudgetPlanForYear(year)
+                    .orElseThrow();
+            assertThat(budgetDB.getCategories().size()).isEqualTo( existingCategoriesIds.size() + 1 );
+
+            BudgetCategory updatedCategory = budgetDB.getCategories()
+                    .stream()
+                    .filter(category -> !existingCategoriesIds.contains(category.getId()))
+                    .findAny()
+                    .orElseThrow();
+
+            assertThat(updatedCategory.getName()).isEqualTo(newCategoryName);
+        }
+    }
+
+    @Test
+    @Transactional
+    void givenDraftBudgetPlan_whenDeleteCategory_thenOk() throws Exception {
+        Year year = Year.now();
+        {
+            // create budget plan
+
+            ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
+            categories.add(new BudgetCategoryDTO(year.getValue(), null, "one", "", BigDecimal.TEN, BudgetCategory.AllocationType.PER_UNIT.toString()));
+            categories.add(new BudgetCategoryDTO(year.getValue(), null, "two", "", BigDecimal.TWO, BudgetCategory.AllocationType.PER_UNIT.toString()));
+            BudgetPlanDTO budget = new BudgetPlanDTO( year.getValue(),
+                    categories,
+                    BudgetPlan.Status.DRAFT.toString()
+            );
+            var useCaseResponse = createBudgetPlanUseCase.create(budget);
+            assertThat(useCaseResponse.ok()).isTrue();
+        }
+        Long categoryId;
+        {
+            // delete first category
+
+            BudgetPlan budget = budgetPlanRepository.getBudgetPlanForYear(year)
+                    .orElseThrow();
+            BudgetCategory category = budget.getCategories().getFirst();
+            categoryId = category.getId();
+
+
+            mockMvc.perform( delete("/api/budget-plan/{year}/category/{id}", year.getValue(), categoryId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content( json.writeValueAsString(BudgetCategoryDTO.fromDomain(category)) )
+            ).andExpect( status().isNoContent() );
+        }
+        {
+            //check that category is deleted from DB
+
+            BudgetPlan budgetDB = budgetPlanRepository.getBudgetPlanForYear(year)
+                    .orElseThrow();
+
+            var deletedCategory = budgetDB.getCategories()
+                    .stream()
+                    .filter(category -> category.getId().equals(categoryId))
+                    .findAny();
+
+            assertThat(deletedCategory.isEmpty()).isTrue();
+        }
+    }
 
 }

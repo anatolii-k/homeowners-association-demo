@@ -1,7 +1,7 @@
 package anatolii.k.hoa.finance.budget.internal.infrastructure.db;
 
 import anatolii.k.hoa.finance.budget.internal.application.BudgetPlanDTO;
-import anatolii.k.hoa.finance.budget.internal.application.BudgetPlanRepository;
+import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlanRepository;
 import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlan;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +20,11 @@ public class BudgetPlanRepositoryImpl implements BudgetPlanRepository {
     @Override
     public void save(BudgetPlan budgetPlan) {
         jpaRepository.save(BudgetPlanDTO.fromDomain(budgetPlan));
+    }
+
+    @Override
+    public boolean doesBudgetPlanExist(Year year) {
+        return jpaRepository.existsById(year.getValue());
     }
 
     public BudgetPlanRepositoryImpl(BudgetPlanRepositoryJPA jpaRepository) {

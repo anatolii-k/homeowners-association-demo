@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class PersonBeansConfiguration {
 
     @Bean
-    PersonAttributesValidation personAttributesValidation( PersonRequiredAttributesReader reader ){
-        return new PersonAttributesValidation( reader.getRequiredAttributes() );
+    PersonAttributesValidation personAttributesValidation( PersonRequiredAttributesProvider provider ){
+        return new PersonAttributesValidation( provider.getRequiredAttributes() );
     }
 }

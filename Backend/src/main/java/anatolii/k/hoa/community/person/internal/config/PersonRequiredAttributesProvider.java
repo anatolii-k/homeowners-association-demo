@@ -9,7 +9,7 @@ import java.util.EnumSet;
 import java.util.stream.Collectors;
 
 @Component
-public class PersonRequiredAttributesReader {
+public class PersonRequiredAttributesProvider {
 
     @Value("${hoa.person.attributes.required}")
     private String requiredAttributesList;

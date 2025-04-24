@@ -1,10 +1,8 @@
 package anatolii.k.hoa.finance.budget.internal.infrastructure.web;
 
 import anatolii.k.hoa.common.application.UseCaseResponse;
-import anatolii.k.hoa.finance.budget.internal.application.BudgetPlanDTO;
-import anatolii.k.hoa.finance.budget.internal.application.BudgetPlanRepository;
-import anatolii.k.hoa.finance.budget.internal.application.ChangeBudgetStateUseCases;
-import anatolii.k.hoa.finance.budget.internal.application.CreateOrUpdateBudgetPlanUseCase;
+import anatolii.k.hoa.finance.budget.internal.application.*;
+import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlanRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -28,22 +26,16 @@ public class BudgetPlanController {
 
     }
 
-    @PutMapping
-    ResponseEntity<UseCaseResponse<CreateOrUpdateBudgetPlanUseCase.BudgetUpdateResult>>
-    createOrUpdateBudgetPlan(@RequestBody BudgetPlanDTO budgetPlanDTO, UriComponentsBuilder uriBuilder){
+    @PostMapping
+    ResponseEntity<UseCaseResponse<Void>> createBudgetPlan(
+            @RequestBody BudgetPlanDTO budgetPlanDTO, UriComponentsBuilder uriBuilder){
 
         Integer year = budgetPlanDTO.getYear();
-        UseCaseResponse<CreateOrUpdateBudgetPlanUseCase.BudgetUpdateResult> response
-                = createOrUpdateBudgetPlanUseCase.createOrUpdate(budgetPlanDTO);
+        UseCaseResponse<Void> response = createBudgetPlanUseCase.create(budgetPlanDTO);
 
         if(!response.ok()){
             return ResponseEntity.unprocessableEntity().body(response);
         }
-        if(response.data() == CreateOrUpdateBudgetPlanUseCase.BudgetUpdateResult.UPDATED){
-            return ResponseEntity.noContent().build();
-        }
-
-        assert (response.data() == CreateOrUpdateBudgetPlanUseCase.BudgetUpdateResult.CREATED);
 
         URI budgetLocation = uriBuilder.path("/api/budget-plan/{year}")
                 .buildAndExpand(year)
@@ -51,22 +43,68 @@ public class BudgetPlanController {
         return ResponseEntity.created(budgetLocation).build();
     }
 
-    @PostMapping("{year}/{action}")
-    ResponseEntity<UseCaseResponse<Void>> changeBudgetState( @PathVariable Integer year, @PathVariable String action ){
-        UseCaseResponse<Void> response = changeBudgetStateUseCases.changeState(year, action);
+    @PostMapping("{year}/submit")
+    ResponseEntity<UseCaseResponse<Void>> submitBudgetPlan( @PathVariable Integer year ){
+        UseCaseResponse<Void> response = submitBudgetPlanUseCase.submit(Year.of(year));
         if(response.ok()){
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.unprocessableEntity().body(response);
     }
 
-    public BudgetPlanController(BudgetPlanRepository budgetPlanRepository, CreateOrUpdateBudgetPlanUseCase createOrUpdateBudgetPlanUseCase, ChangeBudgetStateUseCases changeBudgetStateUseCases) {
+    @PostMapping("{year}/approve")
+    ResponseEntity<UseCaseResponse<Void>> approveBudgetPlan( @PathVariable Integer year ){
+        UseCaseResponse<Void> response = approveBudgetPlanUseCase.approve(Year.of(year));
+        if(response.ok()){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.unprocessableEntity().body(response);
+    }
+
+    @PostMapping("{year}/reject")
+    ResponseEntity<UseCaseResponse<Void>> rejectBudgetPlan(@PathVariable Integer year ){
+        UseCaseResponse<Void> response = rejectBudgetPlanUseCase.reject(Year.of(year));
+        if(response.ok()){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.unprocessableEntity().body(response);
+    }
+
+    @PutMapping("{year}/category")
+    ResponseEntity<UseCaseResponse<Void>> addOrUpdateCategory(
+            @PathVariable Integer year, @RequestBody BudgetCategoryDTO categoryDTO){
+        UseCaseResponse<Void> response = addOrUpdateBudgetCategoryUseCase.addOrUpdate(year, categoryDTO);
+        if(response.ok()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.unprocessableEntity().body(response);
+    }
+
+    @DeleteMapping("{year}/category/{id}")
+    ResponseEntity<UseCaseResponse<Void>> deleteCategory(
+            @PathVariable Integer year, @PathVariable Long id){
+        UseCaseResponse<Void> response = deleteBudgetCategoryUseCase.delete(year, id);
+        if(response.ok()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.unprocessableEntity().body(response);
+    }
+
+    public BudgetPlanController(BudgetPlanRepository budgetPlanRepository, CreateBudgetPlanUseCase createBudgetPlanUseCase, ApproveBudgetPlanUseCase approveBudgetPlanUseCase, SubmitBudgetPlanUseCase submitBudgetPlanUseCase, RejectBudgetPlanUseCase rejectBudgetPlanUseCase, AddOrUpdateBudgetCategoryUseCase addOrUpdateBudgetCategoryUseCase, DeleteBudgetCategoryUseCase deleteBudgetCategoryUseCase) {
         this.budgetPlanRepository = budgetPlanRepository;
-        this.createOrUpdateBudgetPlanUseCase = createOrUpdateBudgetPlanUseCase;
-        this.changeBudgetStateUseCases = changeBudgetStateUseCases;
+        this.createBudgetPlanUseCase = createBudgetPlanUseCase;
+        this.approveBudgetPlanUseCase = approveBudgetPlanUseCase;
+        this.submitBudgetPlanUseCase = submitBudgetPlanUseCase;
+        this.rejectBudgetPlanUseCase = rejectBudgetPlanUseCase;
+        this.addOrUpdateBudgetCategoryUseCase = addOrUpdateBudgetCategoryUseCase;
+        this.deleteBudgetCategoryUseCase = deleteBudgetCategoryUseCase;
     }
 
     private final BudgetPlanRepository budgetPlanRepository;
-    private final CreateOrUpdateBudgetPlanUseCase createOrUpdateBudgetPlanUseCase;
-    private final ChangeBudgetStateUseCases changeBudgetStateUseCases;
+    private final CreateBudgetPlanUseCase createBudgetPlanUseCase;
+    private final ApproveBudgetPlanUseCase approveBudgetPlanUseCase;
+    private final SubmitBudgetPlanUseCase submitBudgetPlanUseCase;
+    private final RejectBudgetPlanUseCase rejectBudgetPlanUseCase;
+    private final AddOrUpdateBudgetCategoryUseCase addOrUpdateBudgetCategoryUseCase;
+    private final DeleteBudgetCategoryUseCase deleteBudgetCategoryUseCase;
 }

@@ -28,11 +28,7 @@ public class BudgetPlan {
             categories = new LinkedList<>();
         }
 
-        categories.forEach(category -> {
-                    if(!category.getYear().equals(year)){
-                        throw BudgetException.categoryYearMismatch( category.getYear(), year );
-                    }
-                });
+        categories.forEach(category -> validateCategory(year,category));
 
         return new BudgetPlan( year, categories,
                 Optional.ofNullable(status).orElse(Status.DRAFT));
@@ -75,6 +71,7 @@ public class BudgetPlan {
         if( !isDraft() ){
             throw BudgetException.budgetAlreadyFinalized();
         }
+        validateCategory(category);
 
         if( category.getId() == null ){
             categories.add(category);
@@ -83,6 +80,17 @@ public class BudgetPlan {
             updateCategory(category);
         }
     }
+
+    public void deleteCategory(Long categoryId) {
+        if( !isDraft() ){
+            throw BudgetException.budgetAlreadyFinalized();
+        }
+        boolean removed = categories.removeIf( category -> category.getId().equals(categoryId) );
+        if(!removed){
+            throw BudgetException.categoryNotExists(categoryId);
+        }
+    }
+
 
     public MoneyAmount getTotal(){
         return categories.stream()
@@ -126,6 +134,16 @@ public class BudgetPlan {
             }
         }
         throw BudgetException.categoryNotExists(category.getId());
+    }
+
+    private static void validateCategory(Year budgetYear, BudgetCategory category){
+        if(!category.getYear().equals(budgetYear)){
+            throw BudgetException.categoryYearMismatch( category.getYear(), budgetYear );
+        }
+    }
+
+    private void validateCategory(BudgetCategory category){
+        validateCategory(year, category);
     }
 
 }

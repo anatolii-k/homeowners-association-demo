@@ -6,19 +6,33 @@ import java.time.Year;
 
 public class BudgetException extends CommonException {
 
+
     public enum ErrorCode{
         INCORRECT_STATUS,
         BUDGET_ALREADY_FINALIZED,
         CATEGORY_NOT_EXISTS,
         BUDGET_NOT_EXISTS,
+        BUDGET_ALREADY_EXISTS,
+        NEW_BUDGET_IS_NOT_DRAFT,
         YEAR_IS_REQUIRED,
         CATEGORY_YEAR_MISMATCH,
         CHANGE_STATUS_NOT_ALLOWED
     }
 
-    public static BudgetException notExists(Integer year) {
+    public static BudgetException newBudgetNotDraft(BudgetPlan.Status status) {
+        return new BudgetException(ErrorCode.NEW_BUDGET_IS_NOT_DRAFT.toString(),
+                "New budget plan has status [%s], but DRAFT is expected".formatted(status.toString()));
+    }
+
+    public static BudgetException alreadyExists(Year year) {
+        return new BudgetException(ErrorCode.BUDGET_ALREADY_EXISTS.toString(),
+                "Budget plan for %d year already exists".formatted(year.getValue()));
+    }
+
+
+    public static BudgetException notExists(Year year) {
         return new BudgetException(ErrorCode.BUDGET_NOT_EXISTS.toString(),
-                "Budget plan for %d year does not exist".formatted(year));
+                "Budget plan for %d year does not exist".formatted(year.getValue()));
     }
 
     public static BudgetException changeStatusNotAllowed() {
