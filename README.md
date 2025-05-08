@@ -15,6 +15,8 @@ Currently is under active development.
 Used **technologies**:
 - Java
 - Spring Boot
+- Spring Security
+- Spring Data JPA
 - Spring Modulith
 - REST
 - H2 DB
