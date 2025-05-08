@@ -8,12 +8,14 @@ import anatolii.k.hoa.community.person.internal.domain.Person;
 import anatolii.k.hoa.community.person.internal.application.PersonException;
 import anatolii.k.hoa.community.unit.internal.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.internal.domain.Unit;
+import anatolii.k.hoa.security.Roles;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,7 @@ public class ResidentEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenRegisterResidentWithCorrectData_thenOk() throws Exception {
 
         Unit unit = createUnit("010", 120);
@@ -62,6 +65,7 @@ public class ResidentEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenRegisterResidentWithNonExistingPerson_thenFails() throws Exception {
 
         Unit unit = createUnit("010", 120);
@@ -81,6 +85,26 @@ public class ResidentEndpointTest {
         assertThat(responseBody.errorDetails()).isNotBlank();
     }
 
+
+    @Test
+    @Transactional
+    @WithMockUser(roles = Roles.USER)
+    void givenUserWithUserRole_whenRegisterResident_thenNotAllowed() throws Exception {
+
+        Unit unit = createUnit("010", 120);
+        Person person = createPerson("1112223334");
+
+
+        mockMvc.perform( post("/api/resident")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        { "personId" : "%d", "unitId" : "%d" }
+                        """.formatted(person.getId(), unit.id())))
+                .andExpect(status().isForbidden());
+    }
+
+
+/////////////////////////////////////////////////////////////
 
     private Unit createUnit(String number, Integer square ){
         var response = registerUnitUseCase.register( number, square );

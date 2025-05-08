@@ -3,6 +3,7 @@ package anatolii.k.hoa.finance.budget.internal.application;
 import anatolii.k.hoa.common.annotations.UseCase;
 import anatolii.k.hoa.common.application.UseCaseProcessor;
 import anatolii.k.hoa.common.application.UseCaseResponse;
+import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlan;
 import anatolii.k.hoa.finance.budget.internal.domain.CreateBudgetPlanOperation;
 
 
@@ -10,6 +11,9 @@ import anatolii.k.hoa.finance.budget.internal.domain.CreateBudgetPlanOperation;
 public class CreateBudgetPlanUseCase {
 
     public UseCaseResponse<Void> create(BudgetPlanDTO newBudget){
+
+        newBudget.setStatus(BudgetPlan.Status.DRAFT.toString());
+
         return UseCaseProcessor.process(
                 () -> createBudgetPlanOperation.create(newBudget.toDomain())
         );

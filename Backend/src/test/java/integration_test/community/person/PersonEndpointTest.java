@@ -6,6 +6,7 @@ import anatolii.k.hoa.common.application.UseCaseResponse;
 import anatolii.k.hoa.community.person.internal.application.RegisterPersonUseCase;
 import anatolii.k.hoa.community.person.internal.application.PersonException;
 import anatolii.k.hoa.community.person.internal.application.PersonDTO;
+import anatolii.k.hoa.security.Roles;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Condition;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,7 @@ public class PersonEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenRegisterNewPersonWithAllCorrectData_thenOk() throws Exception {
 
         var response = mockMvc.perform( post("/api/person")
@@ -74,6 +77,7 @@ public class PersonEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenRegisterNewPersonWithExistingSSN_thenFails() throws Exception {
 
         registerPersonUseCase.register( new PersonDTO(null, "Fname2", "Lname2",
@@ -102,6 +106,7 @@ public class PersonEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenRegisterNewPersonWithoutFirstName_thenFails() throws Exception {
 
         registerPersonUseCase.register( new PersonDTO(null, "Fname2", "Lname2",
@@ -129,6 +134,7 @@ public class PersonEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenGetAllPersons_thenReturnListWithAllPersons() throws Exception {
 
         PersonDTO person1 = new PersonDTO( null, "Fname1", "Lname1",
@@ -155,6 +161,28 @@ public class PersonEndpointTest {
                 .haveAtLeastOne(conditionsPerson1)
                 .haveAtLeastOne(conditionsPerson2);
     }
+
+    @Test
+    @Transactional
+    @WithMockUser(roles = Roles.USER)
+    void givenUserWithUserRole_whenGetAllPersons_thenNotAllowed() throws Exception {
+
+        PersonDTO person1 = new PersonDTO( null, "Fname1", "Lname1",
+                "380933003011", "person1@gmail.com", "1234567891" );
+
+        PersonDTO person2 = new PersonDTO( null, "Fname2", "Lname2",
+                "380933003012", "person2@gmail.com", "1234567892" );
+
+        registerPerson(person1);
+        registerPerson(person2);
+
+        var response = mockMvc.perform( get("/api/person").accept(MediaType.APPLICATION_JSON) )
+                .andExpect(status().isForbidden())
+                .andReturn();
+    }
+
+
+    /// ///////////////////////////////////////////////////////////////////
 
     private void registerPerson( PersonDTO person ){
         registerPersonUseCase.register( new PersonDTO(null, person.getFirstName(), person.getLastName(),

@@ -7,12 +7,14 @@ import anatolii.k.hoa.finance.budget.internal.domain.BudgetCategory;
 import anatolii.k.hoa.finance.budget.internal.domain.BudgetException;
 import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlan;
 import anatolii.k.hoa.finance.budget.internal.domain.BudgetPlanRepository;
+import anatolii.k.hoa.security.Roles;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +50,7 @@ public class BudgetPlanEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.BOARD_MEMBER)
     void whenCreateNewBudgetPlan_thenOk() throws Exception {
 
         Year year = Year.now();
@@ -83,6 +86,7 @@ public class BudgetPlanEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.BOARD_MEMBER)
     void givenDraftBudgetPlan_whenSubmit_thenOk() throws Exception {
         Year year = Year.now();
         ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
@@ -110,6 +114,7 @@ public class BudgetPlanEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.BOARD_MEMBER)
     void givenDraftBudgetPlan_whenApprove_thenFails() throws Exception {
         Year year = Year.now();
         ArrayList<BudgetCategoryDTO> categories = new ArrayList<>();
@@ -138,6 +143,7 @@ public class BudgetPlanEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.BOARD_MEMBER)
     void givenDraftBudgetPlan_whenUpdateCategory_thenOk() throws Exception {
         Year year = Year.now();
         {
@@ -187,6 +193,7 @@ public class BudgetPlanEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.BOARD_MEMBER)
     void givenDraftBudgetPlan_whenAddNewCategory_thenOk() throws Exception {
         Year year = Year.now();
         {
@@ -240,6 +247,7 @@ public class BudgetPlanEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.BOARD_MEMBER)
     void givenDraftBudgetPlan_whenDeleteCategory_thenOk() throws Exception {
         Year year = Year.now();
         {
@@ -283,6 +291,46 @@ public class BudgetPlanEndpointTest {
 
             assertThat(deletedCategory.isEmpty()).isTrue();
         }
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(roles = Roles.USER)
+    void givenUserWithUserRole_whenCreateNewBudgetPlan_thenNotAllowed() throws Exception {
+
+        Year year = Year.now();
+        BudgetPlanDTO budget = new BudgetPlanDTO( year.getValue(),
+                List.of(
+                        new BudgetCategoryDTO(year.getValue(), null, "one", "", BigDecimal.TEN, BudgetCategory.AllocationType.PER_UNIT.toString()),
+                        new BudgetCategoryDTO(year.getValue(), null, "two", "", BigDecimal.TWO, BudgetCategory.AllocationType.PER_UNIT.toString())
+                ),
+                BudgetPlan.Status.DRAFT.toString()
+        );
+
+        mockMvc.perform( post("/api/budget-plan")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content( json.writeValueAsString(budget) )
+                ).andExpect( status().isForbidden() );
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
+    void givenUserWithAdminRole_whenCreateNewBudgetPlan_thenNotAllowed() throws Exception {
+
+        Year year = Year.now();
+        BudgetPlanDTO budget = new BudgetPlanDTO( year.getValue(),
+                List.of(
+                        new BudgetCategoryDTO(year.getValue(), null, "one", "", BigDecimal.TEN, BudgetCategory.AllocationType.PER_UNIT.toString()),
+                        new BudgetCategoryDTO(year.getValue(), null, "two", "", BigDecimal.TWO, BudgetCategory.AllocationType.PER_UNIT.toString())
+                ),
+                BudgetPlan.Status.DRAFT.toString()
+        );
+
+        mockMvc.perform( post("/api/budget-plan")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content( json.writeValueAsString(budget) )
+        ).andExpect( status().isForbidden() );
     }
 
 }

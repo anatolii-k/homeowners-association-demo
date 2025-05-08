@@ -12,6 +12,7 @@ import anatolii.k.hoa.community.unit.internal.application.RegisterUnitUseCase;
 import anatolii.k.hoa.community.unit.internal.domain.Unit;
 import anatolii.k.hoa.community.unit.internal.application.UnitException;
 import anatolii.k.hoa.community.unit.internal.application.UnitRepository;
+import anatolii.k.hoa.security.Roles;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenCreateNewUnitWithUniqueNumber_thenOk() throws Exception {
 
         MvcResult response = mockMvc.perform( post("/api/units")
@@ -76,6 +79,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenCreateNewUnitWithNonUniqueNumber_thenFails() throws Exception {
 
         createUnit("A001", 60);
@@ -97,6 +101,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void givenNoUnitsInDB_whenGetAllUnits_thenReturnsEmptyList() throws Exception {
             MvcResult response = mockMvc.perform(get("/api/units")
                             .accept(MediaType.APPLICATION_JSON))
@@ -111,6 +116,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void givenSomeUnitsInDB_whenGetAllUnits_thenReturnsAllUnits() throws Exception {
         Unit unit1 = createUnit("AOO1", 40);
         Unit unit2 = createUnit("AOO2", 80);
@@ -130,6 +136,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenGetExistingUnit_thenOk() throws Exception{
         Unit unit = createUnit("AOO1", 40);
 
@@ -145,6 +152,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenGetNotExistingUnit_thenNotFound() throws Exception{
 
         MvcResult response = mockMvc.perform( get("/api/units/{id}", 777)
@@ -157,6 +165,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenDeleteExistingUnitWithoutResidents_thenOk() throws Exception {
         Unit unit = createUnit("A001", 60);
 
@@ -169,6 +178,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenDeleteExistingUnitWithResident_thenFails() throws Exception{
         Unit unit = createUnit("A001", 60);
         Person person = createPerson("12334567890");
@@ -187,6 +197,7 @@ public class UnitsEndpointTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = Roles.ADMIN)
     void whenDeleteNotExistingUnit_thenFails() throws Exception {
 
         MvcResult response = mockMvc.perform( delete("/api/units/111"))
@@ -200,6 +211,49 @@ public class UnitsEndpointTest {
         assertThat(responseBody.errorDetails()).isNotBlank();
     }
 
+    @Test
+    @Transactional
+    @WithMockUser(roles = Roles.USER)
+    void givenUserWithUserRole_whenGetExistingUnit_thenOk() throws Exception{
+        Unit unit = createUnit("AOO1", 40);
+
+        MvcResult response = mockMvc.perform( get("/api/units/{id}", unit.id())
+                        .accept(MediaType.APPLICATION_JSON) )
+                .andExpect( status().isOk() )
+                .andReturn();
+
+        Unit resultUnit = json.readValue( response.getResponse().getContentAsString(), Unit.class);
+
+        assertThat(resultUnit).isEqualTo(unit);
+    }
+
+    @Test
+    @Transactional
+    //@WithMockUser(roles = Roles.USER)
+    void givenUnauthorizedUser_whenGetExistingUnit_thenNotAllowed() throws Exception{
+        Unit unit = createUnit("AOO1", 40);
+
+        mockMvc.perform( get("/api/units/{id}", unit.id())
+                        .accept(MediaType.APPLICATION_JSON) )
+                .andExpect( status().isUnauthorized() );
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(roles = Roles.USER)
+    void givenUserWithUserRole_whenCreateNewUnit_thenNotAllowed() throws Exception {
+
+        mockMvc.perform( post("/api/units")
+                        .content("""
+                                { "number": "A001", "area": 40 }
+                                """)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect( status().isForbidden() );
+    }
+
+
+    /////////////////////////////////////////////////////////////
 
     private Unit createUnit(String number, Integer square ){
         var response = registerUnitUseCase.register( number, square );
